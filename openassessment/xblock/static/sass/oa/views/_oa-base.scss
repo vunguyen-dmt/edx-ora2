@@ -519,6 +519,14 @@
     @include padding-left(($baseline-h*0.75));
   }
 
+  .submission__answer__part__prompt {
+    table {
+      td {
+        border: 1px solid #c8c8c8!important;
+      }
+    }
+  }
+
   .submission__answer__part__prompt__title {
     @extend %text-sr;
   }

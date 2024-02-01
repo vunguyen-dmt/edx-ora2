@@ -61,8 +61,9 @@ export const oaTinyMCE = (options) => {
     visual: false,
     plugins: 'link, image, media',
     image_advtab: true,
-    toolbar: 'formatselect | fontselect | bold italic underline forecolor | '
-      + 'bullist numlist outdent indent blockquote | link unlink image media',
+    toolbar: 'undo redo | formatselect | fontselect | fontsizeselect | bold italic underline strikethrough forecolor backcolor | '
+      + 'alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | image media link unlink blockquote | '
+      + 'table emoticons charmap tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry hr | removeformat',
     block_formats: `${gettext('Paragraph')}=p;${gettext('Preformatted')}=pre;${gettext('Heading 3')}=h3;${gettext('Heading 4')}=h4;${gettext('Heading 5')}=h5;${gettext('Heading 6')}=h6`,
     menubar: false,
     statusbar: false,
@@ -73,6 +74,8 @@ export const oaTinyMCE = (options) => {
     setup: setupTinyMCE,
     init_instance_callback: initInstanceCallback,
     browser_spellcheck: true,
+    draggable_modal: true,
+    external_plugins: { tiny_mce_wiris: 'https://www.wiris.net/demo/plugins/tiny_mce/plugin.js' }
   };
 };
 
