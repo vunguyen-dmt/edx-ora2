@@ -2342,6 +2342,9 @@ hr.divider,
   border-left: 10px solid #b9c1c8;
   padding-left: 30px;
 }
+.openassessment .submission__answer__part__prompt table td {
+  border: 1px solid #c8c8c8 !important;
+}
 .openassessment .submission__answer__part__prompt__copy {
   color: #414141;
 }
