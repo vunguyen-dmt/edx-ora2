@@ -59,7 +59,7 @@ export const oaTinyMCE = (options) => {
       code: { inline: 'code' },
     },
     visual: false,
-    plugins: 'link, image, media',
+    plugins: 'link, lists, codesample, emoticons, table, hr, charmap, code, autoresize, image, imagetools, media',
     image_advtab: true,
     toolbar: 'undo redo | formatselect | fontselect | fontsizeselect | bold italic underline strikethrough forecolor backcolor | '
       + 'alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | image media link unlink blockquote | '
