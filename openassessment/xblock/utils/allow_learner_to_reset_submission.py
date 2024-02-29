@@ -35,7 +35,7 @@ def workflow_status_handler(api_data):
     return (self_guard and peer_guard and staff_guard and training_guard)
 
 
-def allow_learner_to_reset_submission(api_data):
+def allow_learner_to_reset_submission_enable(api_data):
     """
     Determines if a student's assessment can be retried based on time and workflow status criteria.
 
