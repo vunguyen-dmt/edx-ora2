@@ -50,7 +50,7 @@ export class StaffView {
         eventObject.preventDefault();
 
         // Confirm dialog
-        let isConfirmed = window.confirm("This will reset your assessment, are you sure?");
+        let isConfirmed = window.confirm(gettext("This will reset your submission, are you sure?"));
 
         // If user confirms (clicks "OK"), then continue with the rest of the logic
         if (isConfirmed) {

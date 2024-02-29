@@ -295,7 +295,7 @@ class OpenAssessmentBlock(
     allow_learner_to_reset_submission = Boolean(
         default=False,
         scope=Scope.settings,
-        help="Whether learners are allowed to reset their submissions when the due has not passed and their submissions have not been graded or are being graded.",
+        help="Whether learners are allowed to reset their submissions when the due has not passed and their submissions have not been graded or are being graded. Note, this setting currently only applies to ORA with one step Staff Assessment.",
     )
 
     @property
