@@ -45,7 +45,7 @@ def staff_context(api_data):
     step_data = api_data.staff_assessment_data
     translate = api_data.config_data.translate
 
-    allow_learner_to_reset_submission = retry_assessment_enable(api_data)
+    allow_learner_to_reset_submission = allow_learner_to_reset_submission(api_data)
 
     not_available_context = {
         "status_value": translate("Not Available"),
