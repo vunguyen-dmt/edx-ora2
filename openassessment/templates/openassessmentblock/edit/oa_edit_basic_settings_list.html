@@ -165,14 +165,14 @@
     <!--allow learner to reset submission-->
     <li id="openassessment_allow_learner_to_reset_submission_wrapper" class="field comp-setting-entry">
         <div class="wrapper-comp-setting">
-            <label for="" class="setting-label">{% trans "Allow learner to reset submmission"%}</label>
-            <select id="openassessment_allow_learner_to_reset_submission_selector" class="input setting-input" name="allow learner to reset submission">
+            <label for="" class="setting-label">{% trans "Allow learners to reset submmissions"%}</label>
+            <select id="openassessment_allow_learner_to_reset_submission_selector" class="input setting-input" name="allow learners to reset submissions">
                 <option value="0">{% trans "False"%}</option>
                 <option value="1" {% if allow_learner_to_resubmit %} selected="true" {% endif %}>{% trans "True"%}</option>
             </select>
         </div>
         <p class="setting-help">
-            {% trans "Whether learners are allowed to reset their submission." %}
+            {% trans "Whether learners are allowed to reset their submissions when the due has not passed and their submissions have not been graded or are being graded." %}
         </p>
     </li>
 </ul>

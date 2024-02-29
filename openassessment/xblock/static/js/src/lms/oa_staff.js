@@ -44,7 +44,7 @@ export class StaffView {
 
     this.baseView.setUpCollapseExpand($('.step--staff-assessment', this.element));
 
-    $('.step--staff-assessment', this.element).find('.allow_learner_to_reset_submission').click(
+    $('.step--staff-assessment', this.element).find('.staff_waiting_allow_learner_to_reset_submission_button').click(
       (eventObject) => {
         // Override default form submission
         eventObject.preventDefault();
