@@ -38,4 +38,12 @@
     </div>
     {% endif %}
 
+    {% if allow_learner_to_reset_submission %}
+    <button 
+    class="allow_learner_to_reset_submission_button" 
+    data-userid="{{user_id}}">
+        Reset your submission to be able to send it again
+    </button>
+    {% endif %}
+
 </li>

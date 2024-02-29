@@ -772,6 +772,8 @@ def serialize_content_to_xml(oa_block, root):
     if oa_block.show_rubric_during_response is not None:
         root.set('show_rubric_during_response', str(oa_block.show_rubric_during_response))
 
+    if oa_block.allow_learner_to_reset_submission is not None:
+        root.set('allow_learner_to_reset_submission', str(oa_block.allow_learner_to_reset_submission))
 
 def serialize_content(oa_block):
     """
@@ -959,6 +961,11 @@ def parse_from_xml(root):
         raise UpdateFromXmlError('Every assessment must contain an "assessments" element.')
     assessments = parse_assessments_xml(assessments_el)
 
+    # Retrieve the allow_learner_to_reset_submission
+    allow_learner_to_reset_submission = False
+    if 'allow_learner_to_reset_submission' in root.attrib:
+        allow_learner_to_reset_submission = _parse_boolean(str(root.attrib['allow_learner_to_reset_submission']))
+
     return {
         'title': title,
         'prompts': prompts,
@@ -982,6 +989,7 @@ def parse_from_xml(root):
         'teams_enabled': teams_enabled,
         'selected_teamset_id': selected_teamset_id,
         'show_rubric_during_response': show_rubric_during_response,
+        'allow_learner_to_reset_submission': allow_learner_to_reset_submission,
     }
 
 

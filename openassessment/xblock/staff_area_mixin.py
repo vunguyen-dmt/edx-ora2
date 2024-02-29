@@ -167,6 +167,7 @@ class StaffAreaMixin:
             vertical_location=str(self.parent)
         )
         context['studio_edit_url'] = url
+        context['allow_learner_to_reset_submission'] = self.allow_learner_to_reset_submission
 
         return path, context
 
