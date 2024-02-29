@@ -254,7 +254,7 @@ export class StudioView {
       teamsEnabled,
       selectedTeamsetId: this.settingsView.teamset(),
       showRubricDuringResponse: this.settingsView.showRubricDuringResponse(),
-      allow_learner_to_reset_submission: this.settingsView.allowLearnerToResetSubmission(),
+      allowLearnerToResetSubmission: this.settingsView.allowLearnerToResetSubmission(),
     }).done(
       // Notify the client-side runtime that we finished saving
       // so it can hide the "Saving..." notification.

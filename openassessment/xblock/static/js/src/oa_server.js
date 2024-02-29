@@ -501,6 +501,11 @@ export class Server {
       show_rubric_during_response: options.showRubricDuringResponse,
       allow_learner_to_reset_submission: options.allowLearnerToResetSubmission
     });
+    console.log('options');
+    console.log(JSON.stringify(options));
+    console.log('payload');
+    console.log(payload)
+
     return $.Deferred((defer) => {
       $.ajax({
         type: 'POST', url, data: payload, contentType: jsonContentType,
