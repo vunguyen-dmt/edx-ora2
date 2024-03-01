@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import pytz
 from openassessment.management.commands.create_oa_submissions_from_file import Command
 from django.http import HttpResponse
+from openassessment.staffgrader.models import SubmissionGradingLock
 
 def workflow_status_handler(api_data):
     """
@@ -48,5 +49,6 @@ def allow_learner_to_reset_submission_enable(api_data):
     """
     config_data = api_data.config_data
     workflow_handler = workflow_status_handler(api_data)
+    lock = SubmissionGradingLock.get_submission_lock(api_data.submission_data.submission_uuid)
 
-    return (config_data.allow_learner_to_reset_submission and workflow_handler)
+    return (config_data.allow_learner_to_reset_submission and workflow_handler and lock is None)
