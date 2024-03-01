@@ -68,6 +68,7 @@ from openassessment.xblock.apis.ora_data_accessor import ORADataAccessor
 
 from django.contrib.auth import get_user_model
 from lms.djangoapps.instructor.enrollment import reset_student_attempts
+from openassessment.xblock.utils.allow_learner_to_reset_submission import allow_learner_to_reset_submission_enable
 
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -1249,6 +1250,8 @@ class OpenAssessmentBlock(
     @XBlock.json_handler
     def reset_student_assessment(self, data, suffix=''):  # pylint: disable=unused-argument
         """
+        IMPORTANT: This method is used only by students, so we need to check if the reset condition is met.
+
         Reset the assessment attempts for a given student.
         Args:
             data (dict): Contains the student information, e.g. { "user_id": "12345" }
@@ -1256,9 +1259,14 @@ class OpenAssessmentBlock(
         Returns:
             dict: A dictionary indicating the success status, e.g. { 'success': True }
         """
-        user = get_user_model().objects.get(id= data["user_id"])
-        reset_student_attempts(self.course_id, user, self.location, user, True)
-        return {'success': True}
+        
+
+        if (allow_learner_to_reset_submission_enable(self.api_data)):
+            user = get_user_model().objects.get(id= data["user_id"])
+            reset_student_attempts(self.course_id, user, self.location, user, True)
+            return {'success': True}
+        else:
+            return {'success': False}
 
     def get_real_user(self, anonymous_user_id):
         """
