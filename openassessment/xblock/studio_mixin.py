@@ -215,6 +215,7 @@ class StudioMixin:
             'date_config_type_doc_url': self.ORA_SETTINGS_DOCUMENT_URL,
             'subsection_end_date': self.due,
             'course_end_date': None if not self.course else self.course.end,
+            'allow_learner_to_reset_submission': self.allow_learner_to_reset_submission,
         }
 
     @XBlock.json_handler
@@ -319,6 +320,7 @@ class StudioMixin:
         self.selected_teamset_id = data.get('selected_teamset_id', '')
         self.show_rubric_during_response = data.get('show_rubric_during_response', False)
         self.date_config_type = data['date_config_type']
+        self.allow_learner_to_reset_submission = data['allow_learner_to_reset_submission']
 
         return {'success': True, 'msg': self._('Successfully updated OpenAssessment XBlock')}
 

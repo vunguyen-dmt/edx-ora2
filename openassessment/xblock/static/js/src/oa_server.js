@@ -44,6 +44,7 @@ export class Server {
     this.getTeamDetail = this.getTeamDetail.bind(this);
     this.listTeams = this.listTeams.bind(this);
     this.getUsername = this.getUsername.bind(this);
+    this.resetStudentAssessment = this.resetStudentAssessment.bind(this);
   }
 
   /**
@@ -381,6 +382,30 @@ export class Server {
   }
 
   /**
+   * Reset a student's assessment.
+   *
+   * @param {object} values_obj - Contains the student information, 
+   *     e.g. { userid: "12345" }
+   * @returns {promise} A promise which logs "Success" if successful,
+   *     and "Error" otherwise.
+   */
+  resetStudentAssessment(values_obj) {
+    const url = this.url('reset_student_assessment');
+    const payload = JSON.stringify({
+      user_id: values_obj.userid,
+    });
+    return $.Deferred((defer) => {
+      $.ajax({
+        type: 'POST', url, data: payload, contentType: jsonContentType,
+      }).done(function (data) {
+        console.log("Success");
+      }).fail(function () {
+        console.log("Error");
+      });
+    });
+  }
+
+  /**
    * Schedules classifier training for Example Based Assessments.
    *
    * @returns {promise} A JQuery promise, which resolves with a
@@ -474,7 +499,13 @@ export class Server {
       teams_enabled: options.teamsEnabled,
       selected_teamset_id: options.selectedTeamsetId,
       show_rubric_during_response: options.showRubricDuringResponse,
+      allow_learner_to_reset_submission: options.allowLearnerToResetSubmission
     });
+    console.log('options');
+    console.log(JSON.stringify(options));
+    console.log('payload');
+    console.log(payload)
+
     return $.Deferred((defer) => {
       $.ajax({
         type: 'POST', url, data: payload, contentType: jsonContentType,

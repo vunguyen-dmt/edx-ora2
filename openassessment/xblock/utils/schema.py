@@ -179,4 +179,5 @@ EDITOR_UPDATE_SCHEMA = Schema({
         })
     ],
     Required('show_rubric_during_response', default=False): bool,
+    Required('allow_learner_to_reset_submission'): bool,
 })

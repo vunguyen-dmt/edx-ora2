@@ -45,6 +45,7 @@ export class EditSettingsView {
     this.validate = this.validate.bind(this);
     this.validationErrors = this.validationErrors.bind(this);
     this.clearValidationErrors = this.clearValidationErrors.bind(this);
+    this.allowLearnerToResetSubmission = this.allowLearnerToResetSubmission.bind(this);
 
     new SelectControl(
       $('#openassessment_submission_file_upload_response', this.element),
@@ -81,6 +82,14 @@ export class EditSettingsView {
       $('#openassessment_leaderboard_editor', this.element),
       { min: 0, max: 100 },
     );
+
+    // this.allowLearnerToResetSubmissionSelectControl = new SelectControl(
+    //   $('#openassessment_allow_learner_to_reset_submission_selector', this.element),
+    //   this.onAllowLearnerToResetSubmissionChange(),
+    //   new Notifier([
+    //     new AssessmentToggleListener(),
+    //   ]),
+    // ).install();
 
     this.fileTypeWhiteListInputField = new InputControl(
       $('#openassessment_submission_white_listed_file_types', this.element),
@@ -429,6 +438,10 @@ export class EditSettingsView {
       this.leaderboardIntField.set(num);
     }
     return this.leaderboardIntField.get(num);
+  }
+
+  allowLearnerToResetSubmission(isEnabled) {
+    return this.settingSelectorEnabled('#openassessment_allow_learner_to_reset_submission_selector', isEnabled);
   }
 
   /**

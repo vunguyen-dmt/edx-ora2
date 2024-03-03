@@ -66,6 +66,11 @@ from openassessment.xblock.apis.assessments.staff_assessment_api import StaffAss
 from openassessment.xblock.apis.assessments.student_training_api import StudentTrainingAPI
 from openassessment.xblock.apis.ora_data_accessor import ORADataAccessor
 
+from django.contrib.auth import get_user_model
+from lms.djangoapps.instructor.enrollment import reset_student_attempts
+from openassessment.xblock.utils.allow_learner_to_reset_submission import allow_learner_to_reset_submission_enable
+
+
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
@@ -286,6 +291,12 @@ class OpenAssessmentBlock(
         default=[],
         scope=Scope.content,
         help="Custom list of file types allowed with submission."
+    )
+
+    allow_learner_to_reset_submission = Boolean(
+        default=False,
+        scope=Scope.settings,
+        help="Whether learners are allowed to reset their submissions when the due has not passed and their submissions have not been graded or are being graded. Note, this setting currently only applies to ORA with one step Staff Assessment.",
     )
 
     @property
@@ -826,6 +837,7 @@ class OpenAssessmentBlock(
         block.text_response_editor = config['text_response_editor']
         block.title = config['title']
         block.white_listed_file_types_string = config['white_listed_file_types']
+        block.allow_learner_to_reset_submission = config['allow_learner_to_reset_submission']
         return block
 
     @property
@@ -1234,6 +1246,27 @@ class OpenAssessmentBlock(
 
         self.runtime.publish(self, event_name, data)
         return {'success': True}
+    
+    @XBlock.json_handler
+    def reset_student_assessment(self, data, suffix=''):  # pylint: disable=unused-argument
+        """
+        IMPORTANT: This method is used only by students, so we need to check if the reset condition is met.
+
+        Reset the assessment attempts for a given student.
+        Args:
+            data (dict): Contains the student information, e.g. { "user_id": "12345" }
+            suffix (str, optional): Unused parameter. Defaults to ''.
+        Returns:
+            dict: A dictionary indicating the success status, e.g. { 'success': True }
+        """
+        
+
+        if (allow_learner_to_reset_submission_enable(self.api_data)):
+            user = get_user_model().objects.get(id= data["user_id"])
+            reset_student_attempts(self.course_id, user, self.location, user, True)
+            return {'success': True}
+        else:
+            return {'success': False}
 
     def get_real_user(self, anonymous_user_id):
         """

@@ -156,7 +156,8 @@ class GradeMixin:
             'allow_latex': self.allow_latex,
             'prompts_type': self.prompts_type,
             'file_urls': self.get_download_urls_from_submission(student_submission),
-            'xblock_id': self.get_xblock_id()
+            'xblock_id': self.get_xblock_id(),
+            'allow_learner_to_reset_submission': self.allow_learner_to_reset_submission
         }
 
         return ('openassessmentblock/grade/oa_grade_complete.html', context)

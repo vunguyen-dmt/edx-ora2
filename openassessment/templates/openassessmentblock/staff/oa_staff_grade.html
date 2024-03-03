@@ -38,4 +38,13 @@
     </div>
     {% endif %}
 
+    {% if allow_learner_to_reset_submission %}
+    <button 
+    class="staff_waiting_allow_learner_to_reset_submission_button"
+    style="background: rgb(0,117,180); color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; border: none;"
+    data-userid="{{user_id}}">
+    {% trans "Reset your submission to be able to send it again" %}
+    </button>
+    {% endif %}
+
 </li>

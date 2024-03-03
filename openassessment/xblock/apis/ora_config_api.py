@@ -34,6 +34,7 @@ class ORAConfigAPI:
         "text_response_editor",
         "title",
         "white_listed_file_types_string",
+        "allow_learner_to_reset_submission"
     ]
     CONFIG_FIELDS = [
         "file_upload_type",

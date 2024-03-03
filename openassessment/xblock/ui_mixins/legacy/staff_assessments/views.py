@@ -8,6 +8,8 @@ from openassessment.assessment.api import (
     staff as staff_api,
 )
 
+from openassessment.xblock.utils.allow_learner_to_reset_submission import allow_learner_to_reset_submission_enable
+
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
@@ -43,6 +45,8 @@ def staff_context(api_data):
     step_data = api_data.staff_assessment_data
     translate = api_data.config_data.translate
 
+    allow_learner_to_reset_submission = allow_learner_to_reset_submission_enable(api_data)
+
     not_available_context = {
         "status_value": translate("Not Available"),
         "button_active": "disabled=disabled aria-expanded=false",
@@ -77,6 +81,8 @@ def staff_context(api_data):
             ),
             "step_classes": "is--showing",
             "button_active": "aria-expanded=true",
+            "allow_learner_to_reset_submission": allow_learner_to_reset_submission, 
+            "user_id" : api_data._block.scope_ids.user_id,
         }
     elif not step_data.has_status:
         context = not_available_context
