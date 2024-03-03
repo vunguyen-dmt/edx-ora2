@@ -2342,6 +2342,21 @@ hr.divider,
   border-left: 10px solid #b9c1c8;
   padding-left: 30px;
 }
+.openassessment .submission__answer__part__prompt table td {
+  border: 1px solid #c8c8c8 !important;
+  padding: 10px !important;
+}
+.openassessment .submission__answer__part__prompt ul {
+  list-style: disc !important;
+  padding-left: 40px !important;
+}
+.openassessment .submission__answer__part__prompt ol {
+  list-style: decimal !important;
+  padding-left: 40px !important;
+}
+.openassessment .submission__answer__part__prompt strong, .openassessment .submission__answer__part__prompt strong span {
+  font-weight: bold !important;
+}
 .openassessment .submission__answer__part__prompt__copy {
   color: #414141;
 }
