@@ -399,8 +399,10 @@ export class Server {
         type: 'POST', url, data: payload, contentType: jsonContentType,
       }).done(function (data) {
         console.log("Success");
+        window.location.reload(true);
       }).fail(function () {
         console.log("Error");
+        alert(gettext('Something went wrong, please try again later!'));
       });
     });
   }

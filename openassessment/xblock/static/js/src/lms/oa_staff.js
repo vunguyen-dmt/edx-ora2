@@ -62,9 +62,6 @@ export class StaffView {
             // Handle the click and send the object to your function
             view.selfReset(values);
 
-            // Refreshing window
-            window.location.reload(true);
-
         } else {
             // Optional: Handle the case where the user clicked "Cancel"
             console.log("Reset Cancelled.");
