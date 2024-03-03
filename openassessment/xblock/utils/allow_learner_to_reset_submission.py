@@ -4,6 +4,20 @@ from openassessment.management.commands.create_oa_submissions_from_file import C
 from django.http import HttpResponse
 from openassessment.staffgrader.models import SubmissionGradingLock
 
+def time_handler(api_data):
+    """
+    Learners can not reset their submissions if the due has passed.
+    """
+    config_data = api_data.config_data
+    try:
+        ora_due_date = datetime.strptime(config_data.submission_due, "%Y-%m-%dT%H:%M:%S%z")
+    except:
+        ora_due_date = datetime.strptime(config_data.submission_due, "%Y-%m-%dT%H:%M")
+
+    current_datetime = datetime.now(pytz.UTC)
+    ora_due_date = ora_due_date.replace(tzinfo=pytz.UTC)
+    return current_datetime < ora_due_date
+
 def workflow_status_handler(api_data):
     """
     Determines the workflow status of a student's response based on whether it 
@@ -48,7 +62,8 @@ def allow_learner_to_reset_submission_enable(api_data):
     :return: bool: True if the student's assessment is eligible for retry, False otherwise.
     """
     config_data = api_data.config_data
+    time_handler_result = time_handler(api_data)
     workflow_handler = workflow_status_handler(api_data)
     lock = SubmissionGradingLock.get_submission_lock(api_data.submission_data.submission_uuid)
 
-    return (config_data.allow_learner_to_reset_submission and workflow_handler and lock is None)
+    return (config_data.allow_learner_to_reset_submission and time_handler_result and workflow_handler and lock is None)
