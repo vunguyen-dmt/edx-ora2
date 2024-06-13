@@ -19,6 +19,7 @@ from django.db.models.functions import Coalesce
 from django.utils.translation import gettext as _
 import requests
 
+from submissions.models import Submission
 from submissions import api as sub_api
 from submissions.errors import SubmissionNotFoundError
 from openassessment.runtime_imports.classes import import_block_structure_transformers, import_external_id
@@ -842,14 +843,29 @@ class OraAggregateData:
             statuses = all_valid_ora_statuses
 
         items = AssessmentWorkflow.objects.filter(course_id=course_id, status__in=statuses).values('item_id', 'status')
+        
+        #only get active submisions.
+        item_ids = [i['item_id'] for i in items]
+        active_submissions = Submission.objects.select_related('student_item').filter(student_item__item_id__in=item_ids, status='A').values('uuid')
+        active_submissions_uuid_set = set()
+
+        for i in active_submissions:
+            active_submissions_uuid_set.add(str(i['uuid']))
 
         result = defaultdict(lambda: {status: 0 for status in statuses})
+
+        for item in items:
+            item_id = item['item_id']
+            result[item_id]['total'] = 0
+
         for item in items:
             item_id = item['item_id']
             status = item['status']
-            result[item_id]['total'] = result[item_id].get('total', 0) + 1
-            if status in statuses:
-                result[item_id][status] += 1
+            #only get active submisions.
+            if item['submission_uuid'] in active_submissions_uuid_set:
+                result[item_id]['total'] = result[item_id].get('total', 0) + 1
+                if status in statuses:
+                    result[item_id][status] += 1
 
         return result
 
