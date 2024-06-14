@@ -842,7 +842,7 @@ class OraAggregateData:
         else:
             statuses = all_valid_ora_statuses
 
-        items = AssessmentWorkflow.objects.filter(course_id=course_id, status__in=statuses).values('item_id', 'status')
+        items = AssessmentWorkflow.objects.filter(course_id=course_id, status__in=statuses).values('item_id', 'status', 'submission_uuid')
         
         #only get active submisions.
         item_ids = [i['item_id'] for i in items]
