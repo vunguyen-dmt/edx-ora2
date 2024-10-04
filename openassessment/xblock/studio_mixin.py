@@ -174,6 +174,9 @@ class StudioMixin:
 
         course_settings = self.get_course_workflow_settings()
 
+        if self.course.end is not None:
+            self.date_config_type = 'course_end'
+
         return {
             'prompts': self.prompts,
             'prompts_type': self.prompts_type,
