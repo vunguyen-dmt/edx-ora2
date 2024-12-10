@@ -5,6 +5,8 @@ import pytz
 
 from openassessment.staffgrader.models.submission_lock import SubmissionGradingLock
 from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
+import logging
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 def allow_resubmission(config_data, workflow_data, submission_data: dict, course_key) -> bool:
@@ -64,6 +66,10 @@ def submission_date_exceeded(config_data, submission_data: dict, course_key) -> 
         bool: True if the submission date has been exceeded, False otherwise.
     """
     course =  CourseOverview.get_from_id(course_key) if course_key is not None else None
+
+    logger.error("submission_date_exceeded course_key %s", str(course_key))
+    logger.error("submission_date_exceeded course_end%s", str(course.end))
+
     course_end = course.end if course is not None else None
 
     is_closed, reason, _, _ = config_data.is_closed(step="submission")
