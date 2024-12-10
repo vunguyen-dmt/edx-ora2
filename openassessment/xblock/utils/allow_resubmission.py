@@ -65,12 +65,13 @@ def submission_date_exceeded(config_data, submission_data: dict, course_key) -> 
     Returns:
         bool: True if the submission date has been exceeded, False otherwise.
     """
+    
+    current_datetime = datetime.now(pytz.UTC)
     course =  CourseOverview.get_from_id(course_key) if course_key is not None else None
-
-    logger.error("submission_date_exceeded course_key %s", str(course_key))
-    logger.error("submission_date_exceeded course_end%s", str(course.end))
-
     course_end = course.end if course is not None else None
+
+    if course_end is not None and current_datetime > course_end:
+        return True
 
     is_closed, reason, _, _ = config_data.is_closed(step="submission")
     if is_closed and reason == "due":
@@ -80,10 +81,9 @@ def submission_date_exceeded(config_data, submission_data: dict, course_key) -> 
         return False
 
     days, hours, minutes = list(map(int, config_data.resubmissions_grace_period.split(":")))
-    current_datetime = datetime.now(pytz.UTC)
     grace_period = timedelta(days=days, hours=hours, minutes=minutes)
     deadline_datetime = submission_data["created_at"] + grace_period
-    return current_datetime > deadline_datetime or (course_end is not None and current_datetime > course_end)
+    return current_datetime > deadline_datetime
 
 
 def has_been_graded(workflow_data) -> bool:
