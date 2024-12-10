@@ -190,7 +190,7 @@ def get_submission_context(config, submission_info):
     # Determine if the student can resubmit their response
     if submission_info.has_submitted:
         response_config["allow_learner_resubmissions"] = allow_resubmission(
-            config, submission_info.workflow_data, submission_info.student_submission
+            config, submission_info.workflow_data, submission_info.student_submission, None
         )
 
     # Get access information (whether problem is closed) and reasons

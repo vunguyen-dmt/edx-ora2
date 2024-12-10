@@ -68,7 +68,7 @@ class TestAllowResubmission(unittest.TestCase):
         """
         submission_lock_mock.return_value = None
 
-        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data)
+        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data, self.course.end)
 
         self.assertTrue(result)
 
@@ -81,7 +81,7 @@ class TestAllowResubmission(unittest.TestCase):
         self.config_data.resubmissions_grace_period = time
         submission_lock_mock.return_value = None
 
-        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data)
+        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data, self.course.end)
 
         self.assertTrue(result)
 
@@ -92,7 +92,7 @@ class TestAllowResubmission(unittest.TestCase):
         self.submission_data["created_at"] = datetime.datetime(2020, 1, 1, tzinfo=datetime.timezone.utc)
         self.config_data.resubmissions_grace_period = "00:00:30"
 
-        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data)
+        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data, self.course.end)
 
         self.assertFalse(result)
 
@@ -102,7 +102,7 @@ class TestAllowResubmission(unittest.TestCase):
         """
         self.config_data.allow_learner_resubmissions = False
 
-        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data)
+        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data, self.course.end)
 
         self.assertFalse(result)
 
@@ -112,7 +112,7 @@ class TestAllowResubmission(unittest.TestCase):
         """
         self.config_data.is_closed = lambda step: (True, "due", None, None)
 
-        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data)
+        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data, self.course.end)
 
         self.assertFalse(result)
 
@@ -124,7 +124,7 @@ class TestAllowResubmission(unittest.TestCase):
         """
         self.workflow_data.status = status
 
-        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data)
+        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data, self.course.end)
 
         self.assertFalse(result)
 
@@ -136,7 +136,7 @@ class TestAllowResubmission(unittest.TestCase):
         self.config_data.assessment_steps = ["peer-assessment"]
         submission_lock_mock.return_value = None
 
-        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data)
+        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data, self.course.end)
 
         self.assertFalse(result)
 
@@ -147,7 +147,7 @@ class TestAllowResubmission(unittest.TestCase):
         """
         submission_lock_mock.return_value = Mock(is_active=True)
 
-        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data)
+        result = allow_resubmission(self.config_data, self.workflow_data, self.submission_data), self.course.end
 
         self.assertFalse(result)
 
