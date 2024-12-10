@@ -6,7 +6,7 @@ import pytz
 from openassessment.staffgrader.models.submission_lock import SubmissionGradingLock
 
 
-def allow_resubmission(config_data, workflow_data, submission_data: dict) -> bool:
+def allow_resubmission(config_data, workflow_data, submission_data: dict, course_end) -> bool:
     """
     Determines if a learner can reset their submission and try again. A learner
     can resubmit if the following conditions are met:
@@ -26,7 +26,7 @@ def allow_resubmission(config_data, workflow_data, submission_data: dict) -> boo
     """
     return (
         allow_learner_resubmissions(config_data) and not
-        submission_date_exceeded(config_data, submission_data) and not
+        submission_date_exceeded(config_data, submission_data, course_end) and not
         has_been_graded(workflow_data) and not
         has_grade_in_process(submission_data["uuid"]) and not
         has_peer_step(config_data)
@@ -46,7 +46,7 @@ def allow_learner_resubmissions(config_data) -> bool:
     return config_data.allow_learner_resubmissions
 
 
-def submission_date_exceeded(config_data, submission_data: dict) -> bool:
+def submission_date_exceeded(config_data, submission_data: dict, course_end) -> bool:
     """
     Checks if the submission due date has been exceeded and if the learner is
     within the grace period. The grace period is the time after the learner
@@ -73,7 +73,7 @@ def submission_date_exceeded(config_data, submission_data: dict) -> bool:
     current_datetime = datetime.now(pytz.UTC)
     grace_period = timedelta(days=days, hours=hours, minutes=minutes)
     deadline_datetime = submission_data["created_at"] + grace_period
-    return current_datetime > deadline_datetime
+    return current_datetime > deadline_datetime or current_datetime > course_end
 
 
 def has_been_graded(workflow_data) -> bool:
