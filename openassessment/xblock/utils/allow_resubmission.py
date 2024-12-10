@@ -4,9 +4,10 @@ from datetime import datetime, timedelta
 import pytz
 
 from openassessment.staffgrader.models.submission_lock import SubmissionGradingLock
+from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
 
 
-def allow_resubmission(config_data, workflow_data, submission_data: dict, course_end) -> bool:
+def allow_resubmission(config_data, workflow_data, submission_data: dict, course_key) -> bool:
     """
     Determines if a learner can reset their submission and try again. A learner
     can resubmit if the following conditions are met:
@@ -26,7 +27,7 @@ def allow_resubmission(config_data, workflow_data, submission_data: dict, course
     """
     return (
         allow_learner_resubmissions(config_data) and not
-        submission_date_exceeded(config_data, submission_data, course_end) and not
+        submission_date_exceeded(config_data, submission_data, course_key) and not
         has_been_graded(workflow_data) and not
         has_grade_in_process(submission_data["uuid"]) and not
         has_peer_step(config_data)
@@ -46,7 +47,7 @@ def allow_learner_resubmissions(config_data) -> bool:
     return config_data.allow_learner_resubmissions
 
 
-def submission_date_exceeded(config_data, submission_data: dict, course_end) -> bool:
+def submission_date_exceeded(config_data, submission_data: dict, course_key) -> bool:
     """
     Checks if the submission due date has been exceeded and if the learner is
     within the grace period. The grace period is the time after the learner
@@ -62,6 +63,9 @@ def submission_date_exceeded(config_data, submission_data: dict, course_end) -> 
     Returns:
         bool: True if the submission date has been exceeded, False otherwise.
     """
+    course =  CourseOverview.get_from_id(course_key) if course_key is not None else None
+    course_end = course.end if course is not None else None
+
     is_closed, reason, _, _ = config_data.is_closed(step="submission")
     if is_closed and reason == "due":
         return True
