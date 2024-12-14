@@ -31,6 +31,7 @@ from openassessment.xblock.utils.resolve_dates import (
 )
 from openassessment.xblock.utils.schema import EDITOR_UPDATE_SCHEMA
 from openassessment.xblock.utils.validation import validator
+from datetime import datetime, timedelta, timezone
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -103,6 +104,31 @@ class StudioMixin:
         }
         fragment.initialize_js('OpenAssessmentEditor', js_context_dict)
         return fragment
+    
+    def adjust_datetime_from_backend_to_fontend(self, value):
+        if not value:
+            return value
+        
+        utc_datetime = datetime.strptime(value, "%Y-%m-%dT%H:%M")
+        # Add UTC timezone to make it timezone-aware
+        utc_datetime = utc_datetime.replace(tzinfo=timezone.utc)
+        # Convert the datetime to UTC+7
+        adjusted = utc_datetime.astimezone(timezone(timedelta(hours=7)))
+        # Return the datetime as a string in ISO format without seconds
+        return adjusted.strftime("%Y-%m-%dT%H:%M")
+    
+    def adjust_datetime_from_frontend_to_backend(self, value):
+        if not value:
+            return value
+        
+        # Parse the input datetime string as naive
+        local_datetime = datetime.strptime(value, "%Y-%m-%dT%H:%M")
+        # Add UTC+7 timezone to make it timezone-aware
+        local_datetime = local_datetime.replace(tzinfo=timezone(timedelta(hours=7)))
+        # Convert the datetime to UTC+0
+        utc_datetime = local_datetime.astimezone(timezone.utc)
+        # Return the datetime as a string in ISO format without seconds
+        return utc_datetime.strftime("%Y-%m-%dT%H:%M")
 
     def editor_context(self):
         """
@@ -124,7 +150,7 @@ class StudioMixin:
                 [
                     (self.submission_start, self.submission_due)
                 ] + [
-                    (asmnt.get('start'), asmnt.get('due'))
+                    (self.adjust_datetime_from_backend_to_fontend(asmnt.get('start')), self.adjust_datetime_from_backend_to_fontend(asmnt.get('due')))
                     for asmnt in self.valid_assessments
                 ],
                 self._
@@ -141,7 +167,7 @@ class StudioMixin:
             date_ranges = [
                 (_parse_date_safe(self.submission_start), _parse_date_safe(self.submission_due))
             ] + [
-                (_parse_date_safe(asmnt.get('start')), _parse_date_safe(asmnt.get('due')))
+                (_parse_date_safe(self.adjust_datetime_from_backend_to_fontend(asmnt.get('start'))), _parse_date_safe(self.adjust_datetime_from_backend_to_fontend(asmnt.get('due'))))
                 for asmnt in self.valid_assessments
             ]
 
@@ -283,6 +309,15 @@ class StudioMixin:
                     option['name'] = uuid4().hex
 
         xblock_validator = validator(self, self._)
+
+        #convert from utc7 to utc0
+        if data['assessments']:
+            for asmnt in data['assessments']:
+                if 'start' in asmnt:
+                    asmnt['start'] = self.adjust_datetime_from_frontend_to_backend(asmnt['start'])
+                if 'due' in asmnt:
+                    asmnt['due'] = self.adjust_datetime_from_frontend_to_backend(asmnt['due'])
+
         success, msg = xblock_validator(
             create_rubric_dict(data['prompts'], data['criteria']),
             data['assessments'],
