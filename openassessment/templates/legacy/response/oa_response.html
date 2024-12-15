@@ -43,7 +43,7 @@
         {% elif submission_due %}
         <span class="step__deadline">
             {# Translators: This string displays a date to the user, then tells them the time until that date.  Example: "due August 13th, 2014 (in 5 days and 45 minutes)" #}
-            {% blocktrans with due_date=submission_due|timezone:"UTC"|date:"c" time_until=submission_due|timeuntil %}
+            {% blocktrans with due_date=submission_due|timezone:"Asia/Bangkok"|date:"c" time_until=submission_due|timezone:"Asia/Bangkok"|timeuntil %}
             <span id="oa_step_deadline_response" class="date ora-datetime" data-datetime="{{ due_date }}" data-string="due {date} (in {{ time_until }})" data-timezone="{{ user_timezone }}" data-language="{{ user_language }}"></span>
             {% endblocktrans %}
         </span>

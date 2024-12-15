@@ -108,7 +108,8 @@ class StudioMixin:
     def adjust_datetime_from_backend_to_fontend(self, value):
         if not value:
             return value
-        
+
+        value = value[0:16]
         utc_datetime = datetime.strptime(value, "%Y-%m-%dT%H:%M")
         # Add UTC timezone to make it timezone-aware
         utc_datetime = utc_datetime.replace(tzinfo=timezone.utc)
@@ -121,6 +122,7 @@ class StudioMixin:
         if not value:
             return value
         
+        value = value[0:16]
         # Parse the input datetime string as naive
         local_datetime = datetime.strptime(value, "%Y-%m-%dT%H:%M")
         # Add UTC+7 timezone to make it timezone-aware
@@ -150,7 +152,7 @@ class StudioMixin:
                 [
                     (self.submission_start, self.submission_due)
                 ] + [
-                    (self.adjust_datetime_from_backend_to_fontend(asmnt.get('start')), self.adjust_datetime_from_backend_to_fontend(asmnt.get('due')))
+                    (asmnt.get('start'), asmnt.get('due'))
                     for asmnt in self.valid_assessments
                 ],
                 self._
@@ -167,11 +169,16 @@ class StudioMixin:
             date_ranges = [
                 (_parse_date_safe(self.submission_start), _parse_date_safe(self.submission_due))
             ] + [
-                (_parse_date_safe(self.adjust_datetime_from_backend_to_fontend(asmnt.get('start'))), _parse_date_safe(self.adjust_datetime_from_backend_to_fontend(asmnt.get('due'))))
+                (_parse_date_safe(asmnt.get('start')), _parse_date_safe(asmnt.get('due')))
                 for asmnt in self.valid_assessments
             ]
 
         submission_start, submission_due = date_ranges[0]
+
+        # use ut7 instead of utc0
+        submission_start = self.adjust_datetime_from_backend_to_fontend(submission_start)
+        submission_due = self.adjust_datetime_from_backend_to_fontend(submission_due)
+
         assessments = self._assessments_editor_context(date_ranges[1:])
         self.editor_assessments_order = self._editor_assessments_order_context()
 
@@ -401,8 +408,8 @@ class StudioMixin:
             # the dashes to underscores.
             template_name = make_django_template_key(asmnt['name'])
             assessments[template_name] = copy.deepcopy(asmnt)
-            assessments[template_name]['start'] = date_range[0]
-            assessments[template_name]['due'] = date_range[1]
+            assessments[template_name]['start'] = self.adjust_datetime_from_backend_to_fontend(date_range[0])
+            assessments[template_name]['due'] = self.adjust_datetime_from_backend_to_fontend(date_range[1])
 
         # In addition to the data in the student training assessment, we need to include two additional
         # pieces of information: a blank context to render the empty template with, and the criteria
