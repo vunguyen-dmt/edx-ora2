@@ -12,7 +12,7 @@
                     id="self_assessment_start_date"
                     type="text"
                     class="input setting-input"
-                    value="{{ assessments.self_assessment.start|utc|date:"Y-m-d" }}"
+                    value="{{ assessments.self_assessment.start|timezone:"Asia/Bangkok"|date:"Y-m-d" }}"
                 >
             </div>
             <div class="wrapper-comp-setting">
@@ -21,7 +21,7 @@
                     id="self_assessment_start_time"
                     type="text"
                     class="input setting-input"
-                    value="{{ assessments.self_assessment.start|utc|date:"H:i" }}"
+                    value="{{ assessments.self_assessment.start|timezone:"Asia/Bangkok"|date:"H:i" }}"
                 >
             </div>
             <p class="setting-help">{% trans "The date and time when learners can begin assessing their responses." %}</p>
@@ -33,7 +33,7 @@
                     id="self_assessment_due_date"
                     type="text"
                     class="input setting-input"
-                    value="{{ assessments.self_assessment.due|utc|date:"Y-m-d" }}"
+                    value="{{ assessments.self_assessment.due|timezone:"Asia/Bangkok"|date:"Y-m-d" }}"
                 >
             </div>
             <div class="wrapper-comp-setting">
@@ -42,7 +42,7 @@
                     id="self_assessment_due_time"
                     type="text"
                     class="input setting-input"
-                    value="{{ assessments.self_assessment.due|utc|date:"H:i" }}"
+                    value="{{ assessments.self_assessment.due|timezone:"Asia/Bangkok"|date:"H:i" }}"
                 >
             </div>
             <p class="setting-help">{% trans "The date and time when all self assessments must be complete." %}</p>
