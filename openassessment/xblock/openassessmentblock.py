@@ -594,7 +594,7 @@ class OpenAssessmentBlock(
             context_dict,
             initialize_js_func='OpenAssessmentBlock',
             additional_js_context={
-                "MFE_VIEW_ENABLED": self.mfe_views_enabled,
+                "MFE_VIEW_ENABLED": self.mfe_views_enabled and self.mfe_views_supported,
                 "ORA_MICROFRONTEND_URL": getattr(settings, 'ORA_MICROFRONTEND_URL', ''),
                 "IS_STUDIO": True,
             }
@@ -1354,7 +1354,7 @@ class OpenAssessmentBlock(
         Returns:
             dict: A dictionary indication the status with keys 'success' (bool) and 'msg' (str)
         """
-        if not allow_resubmission(self.config_data, self.workflow_data, self.submission_data.student_submission):
+        if not allow_resubmission(self.config_data, self.workflow_data, self.submission_data.student_submission, self.course_id):
             return {"success": False, "msg": self._("You can't reset your submission.")}
 
         StudentModule = import_student_module()

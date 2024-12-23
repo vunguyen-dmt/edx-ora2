@@ -547,6 +547,27 @@
     @include padding-left(($baseline-h*0.75));
   }
 
+  .submission__answer__part__prompt {
+    table {
+      td {
+        border: 1px solid #c8c8c8!important;
+        padding: 10px!important;
+      }
+    }
+    ul {
+      list-style: disc!important;
+      padding-left: 40px!important;
+    }
+    ol {
+      list-style: decimal!important;
+      padding-left: 40px!important;
+    }
+    strong, strong span {
+      font-weight: bold!important;
+    }
+  }
+
+
   .submission__answer__part__prompt__title {
     @extend %text-sr;
   }

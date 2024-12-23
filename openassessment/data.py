@@ -31,7 +31,7 @@ from openassessment.assessment.api import peer as peer_api
 from openassessment.assessment.models import Assessment, AssessmentFeedback, AssessmentPart
 from openassessment.fileupload.api import get_download_url
 from openassessment.workflow.models import AssessmentWorkflow, TeamAssessmentWorkflow
-
+from opaque_keys.edx.keys import UsageKey
 
 logger = logging.getLogger(__name__)
 
@@ -892,15 +892,48 @@ class OraAggregateData:
         else:
             statuses = all_valid_ora_statuses
 
-        items = AssessmentWorkflow.objects.filter(course_id=course_id, status__in=statuses).values('item_id', 'status')
+        items = AssessmentWorkflow.objects.filter(course_id=course_id, status__in=statuses).values('item_id', 'status', 'submission_uuid')
+        item_ids = set()
+        for i in items:
+            item_ids.add(i['item_id'])
+
+        team_ora_ids = set()
+        individual_ora_ids = set()
+        available_item_ids = set()
+
+        for i in item_ids:
+            ora_usage_key = UsageKey.from_string(i)
+            if modulestore().has_item(ora_usage_key):
+                available_item_ids.add(i)
+                ora_metadata = modulestore().get_item(ora_usage_key)
+                if ora_metadata.teams_enabled:
+                    team_ora_ids.add(i)
+                else:
+                    individual_ora_ids.add(i)
+        
+        active_submissions = Submission.objects.select_related('student_item').filter(student_item__item_id__in=available_item_ids, status='A').values('uuid', 'team_submission_id')
+        active_team_submissions_uuids= set()
+        active_individual_submissions_uuids= set()
+
+        for i in active_submissions:
+            if i['team_submission_id']:
+                active_team_submissions_uuids.add(str(i['uuid']))
+            else:
+                active_individual_submissions_uuids.add(str(i['uuid']))
 
         result = defaultdict(lambda: {status: 0 for status in statuses})
+
+        for item in items:
+            result[item['item_id']]['total'] = 0
+
         for item in items:
             item_id = item['item_id']
             status = item['status']
-            result[item_id]['total'] = result[item_id].get('total', 0) + 1
-            if status in statuses:
-                result[item_id][status] += 1
+            submission_uuid = item['submission_uuid']
+            if (item_id in team_ora_ids and submission_uuid in active_team_submissions_uuids) or (item_id in individual_ora_ids and submission_uuid in active_individual_submissions_uuids):
+                result[item_id]['total'] = result[item_id]['total'] + 1
+                if status in statuses:
+                    result[item_id][status] += 1
 
         return result
 

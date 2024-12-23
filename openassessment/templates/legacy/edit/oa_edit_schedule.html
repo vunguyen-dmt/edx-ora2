@@ -38,7 +38,7 @@
                     type="text"
                     class="input setting-input"
                     id="openassessment_submission_start_date"
-                    value="{{ submission_start|utc|date:"Y-m-d" }}"
+                    value="{{ submission_start|timezone:"Asia/Bangkok"|date:"Y-m-d" }}"
                 >
             </div>
             <div class="wrapper-comp-setting">
@@ -51,7 +51,7 @@
                     type="text"
                     class="input setting-input"
                     id="openassessment_submission_start_time"
-                    value="{{ submission_start|utc|date:"H:i" }}"
+                    value="{{ submission_start|timezone:"Asia/Bangkok"|date:"H:i" }}"
                 >
             </div>
             <p class="setting-help">{% trans "The date and time when learners can begin submitting responses." %}</p>
@@ -68,7 +68,7 @@
                     type="text"
                     class="input setting-input"
                     id="openassessment_submission_due_date"
-                    value="{{ submission_due|utc|date:"Y-m-d" }}"
+                    value="{{ submission_due|timezone:"Asia/Bangkok"|date:"Y-m-d" }}"
                 >
             </div>
             <div class="wrapper-comp-setting">
@@ -81,7 +81,7 @@
                     type="text"
                     class="input setting-input"
                     id="openassessment_submission_due_time"
-                    value="{{ submission_due|utc|date:"H:i" }}"
+                    value="{{ submission_due|timezone:"Asia/Bangkok"|date:"H:i" }}"
                 >
             </div>
             <p class="setting-help">{% trans "The date and time when learners can no longer submit responses." %}</p>
@@ -96,7 +96,7 @@
         <div class="field comp-setting-entry">
             <h3>Submission and assesssment due dates will align with the subsection due date.</h3>
             <br/>
-            <h3>The subsection due date is currently {{ subsection_end_date|utc|date:"Y-m-d" }}</h3>
+            <h3>The subsection due date is currently {{ subsection_end_date|timezone:"Asia/Bangkok"|date:"Y-m-d" }}</h3>
             <br/>
             <h3>Learners will have until the subsection is due to submit response and complete all assesment steps.</h3>
         </div>
@@ -106,7 +106,7 @@
         <div class="field comp-setting-entry">
             <h3>Submission and assesssment due dates will align with the course end date.</h3>
             <br/>
-            <h3>The course end date is currently {{ course_end_date|utc|date:"Y-m-d" }}</h3>
+            <h3>The course end date is currently {{ course_end_date|timezone:"Asia/Bangkok"|date:"Y-m-d" }}</h3>
             <br/>
             <h3>Learners will have until the course ends to submit response and complete all assesment steps.</h3>
         </div>
