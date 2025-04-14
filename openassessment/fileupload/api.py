@@ -15,7 +15,7 @@ from openassessment.assessment.models.base import SharedFileUpload
 from openassessment.fileupload.exceptions import FileUploadError
 
 from . import backends
-
+import re
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -34,6 +34,19 @@ def get_download_url(key):
     Returns the url at which the file that corresponds to the key can be downloaded.
     """
     url = backends.get_backend().get_download_url(key)
+
+    # trying to fix team submission bug.
+    if not url:
+        match = re.match(r'^(.*)/(\d+)$', key)
+        if match:
+            base, num = match.groups()
+            num = int(num)
+            while(num < 20 and num > 0 and not url):
+                num = num - 1
+                if num == 0:
+                    url = backends.get_backend().get_download_url(base)
+                else:
+                    url = backends.get_backend().get_download_url(f'{base}/{num}')
     if not url:
         logger.warning('FileUploadError: Could not retrieve URL for key %s', key)
     return url
