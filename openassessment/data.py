@@ -1599,7 +1599,7 @@ class ZippedListSubmissionAnswer(OraSubmissionAnswer):
     def _safe_get_download_url(self, key, number_of_file):
         """ Helper to get a download URL """
         try:
-            return get_download_url(key) if number_of_file == 1 else get_download_url_2(key)
+            return get_download_url_2(key) if number_of_file == 1 else get_download_url(key)
         except FileUploadInternalError as exc:
             logger.exception(
                 "FileUploadError: Download url for file key %s failed with error %s",
