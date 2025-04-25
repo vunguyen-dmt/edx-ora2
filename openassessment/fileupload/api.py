@@ -34,6 +34,17 @@ def get_download_url(key):
     Returns the url at which the file that corresponds to the key can be downloaded.
     """
     url = backends.get_backend().get_download_url(key)
+    
+    if not url:
+        logger.warning('FileUploadError: Could not retrieve URL for key %s', key)
+    return url
+
+
+def get_download_url_2(key):
+    """
+    Returns the url at which the file that corresponds to the key can be downloaded.
+    """
+    url = backends.get_backend().get_download_url(key)
 
     # trying to fix team submission bug.
     if not url:

@@ -29,7 +29,7 @@ from openassessment.runtime_imports.classes import import_block_structure_transf
 from openassessment.runtime_imports.functions import get_course_blocks, modulestore
 from openassessment.assessment.api import peer as peer_api
 from openassessment.assessment.models import Assessment, AssessmentFeedback, AssessmentPart
-from openassessment.fileupload.api import get_download_url
+from openassessment.fileupload.api import get_download_url, get_download_url_2
 from openassessment.workflow.models import AssessmentWorkflow, TeamAssessmentWorkflow
 from opaque_keys.edx.keys import UsageKey
 
@@ -1596,10 +1596,10 @@ class ZippedListSubmissionAnswer(OraSubmissionAnswer):
         except IndexError:
             return default
 
-    def _safe_get_download_url(self, key):
+    def _safe_get_download_url(self, key, number_of_file):
         """ Helper to get a download URL """
         try:
-            return get_download_url(key)
+            return get_download_url(key) if number_of_file == 1 else get_download_url_2(key)
         except FileUploadInternalError as exc:
             logger.exception(
                 "FileUploadError: Download url for file key %s failed with error %s",
@@ -1625,11 +1625,12 @@ class ZippedListSubmissionAnswer(OraSubmissionAnswer):
             file_names = self.raw_answer.get(self.version.name, [])
             file_descriptions = self.raw_answer.get(self.version.description, [])
             file_sizes = self.raw_answer.get(self.version.size, [])
+            number_of_file = len(file_keys)
             for i, key in enumerate(file_keys):
                 name = self._index_safe_get(i, file_names, default_missing_value)
                 description = self._index_safe_get(i, file_descriptions, default_missing_value)
                 size = self._index_safe_get(i, file_sizes, 0)
-                url = None if not generate_urls else self._safe_get_download_url(key)
+                url = None if not generate_urls else self._safe_get_download_url(key, number_of_file)
                 file_upload = SubmissionFileUpload(
                     key,
                     name=name,
