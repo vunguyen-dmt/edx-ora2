@@ -146,7 +146,7 @@ class OpenAssessmentBlock(
     )
 
     date_config_type = String(
-        default=DATE_CONFIG_MANUAL,
+        default=DATE_CONFIG_COURSE_END,
         scope=Scope.settings,
         help="The type of date configuration. Possible values are 'manual', 'subsection', and 'course_end'."
     )
