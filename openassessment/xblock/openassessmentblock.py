@@ -140,7 +140,7 @@ class OpenAssessmentBlock(
     )
 
     allow_learner_resubmissions = Boolean(
-        default=False,
+        default=True,
         scope=Scope.settings,
         help="Allow learners to resubmit their response."
     )

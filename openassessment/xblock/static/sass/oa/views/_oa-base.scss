@@ -543,7 +543,7 @@
     position: relative;
     margin: ($baseline-v/2) 0;
     border: 1px solid $color-decorative-tertiary;
-    @include border-left(($baseline-h/4) solid $color-decorative-secondary);
+    // @include border-left(($baseline-h/4) solid $color-decorative-secondary);
     @include padding-left(($baseline-h*0.75));
   }
 
