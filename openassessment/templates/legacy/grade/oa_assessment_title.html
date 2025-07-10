@@ -1,7 +1,7 @@
 {% load i18n %}
 {% spaceless %}
     {% if assessment %}
-      <div class="answer__source">
+      <!-- <div class="answer__source">
           {% if assessment.points != None %}
               <span class="answer__source__value answer__source__value-with-points">
                   {% blocktrans with assessment_title=assessment.title count points=assessment.points %}
@@ -13,7 +13,7 @@
           {% else %}
               <span class="answer__source__value">{{ assessment.title }}</span>
           {% endif %}
-      </div>
+      </div> -->
       <div class="answer__value">
           <span class="answer__value__value">
               {{ assessment.option.label }}
