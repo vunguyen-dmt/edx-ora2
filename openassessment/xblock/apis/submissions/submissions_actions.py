@@ -6,8 +6,10 @@ import json
 import logging
 import os
 
-from opaque_keys.edx.keys import CourseKey
+from opaque_keys.edx.keys import CourseKey, UsageKey
 from submissions.api import Submission, SubmissionError, SubmissionRequestError
+from completion.waffle import ENABLE_COMPLETION_TRACKING_SWITCH
+from completion.models import BlockCompletion
 
 from openassessment.fileupload.exceptions import FileUploadError
 from openassessment.workflow.errors import AssessmentWorkflowError
@@ -191,6 +193,11 @@ def create_submission(
         },
     )
 
+    _set_block_completion_for_submit_respone(
+        block_config_data.get_real_user(student_item_dict.get("student_id")),
+        UsageKey.from_string(student_item_dict.get("item_id")),
+    )
+
     return submission
 
 
@@ -253,6 +260,13 @@ def create_team_submission(
             "answer": submission["answer"],
         },
     )
+
+    for individual_id_in_team in anonymous_student_ids:
+        _set_block_completion_for_submit_respone(
+            block_config_data.get_real_user(individual_id_in_team),
+            UsageKey.from_string(student_item_dict['item_id']),
+        )
+
     return submission
 
 
@@ -386,3 +400,12 @@ def get_upload_url(content_type, file_name, file_index, block_config, submission
     except FileUploadError:
         logger.exception("FileUploadError:Error retrieving upload URL")
         raise
+
+def _set_block_completion_for_submit_respone(user_class, block_key):
+    if not ENABLE_COMPLETION_TRACKING_SWITCH.is_enabled():
+        return
+    BlockCompletion.objects.submit_completion(
+        user=user_class,
+        block_key=block_key,
+        completion=1.0,
+    )
