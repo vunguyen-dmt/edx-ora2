@@ -134,7 +134,7 @@ class OpenAssessmentBlock(
     )
 
     allow_multiple_files = Boolean(
-        default=True,
+        default=False,
         scope=Scope.settings,
         help="Allow multiple files uploaded with submission (if file upload enabled)."
     )
@@ -153,7 +153,8 @@ class OpenAssessmentBlock(
 
     file_upload_response_raw = String(
         help="Specify whether learners are able to upload files as a part of their response.",
-        default='optional',
+        # default='optional',
+        default='required',
         scope=Scope.settings
     )
 
@@ -283,7 +284,8 @@ class OpenAssessmentBlock(
 
     text_response_raw = String(
         help="Specify whether learners must include a text based response to this problem's prompt.",
-        default="required",
+        # default="required",
+        default="none",
         scope=Scope.settings
     )
 
