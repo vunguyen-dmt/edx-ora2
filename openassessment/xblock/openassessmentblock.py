@@ -285,7 +285,7 @@ class OpenAssessmentBlock(
     text_response_raw = String(
         help="Specify whether learners must include a text based response to this problem's prompt.",
         # default="required",
-        default="none",
+        default=None,
         scope=Scope.settings
     )
 
