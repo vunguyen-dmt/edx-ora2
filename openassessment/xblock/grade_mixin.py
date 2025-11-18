@@ -12,9 +12,9 @@ from django.utils.translation import gettext as _
 from openassessment.assessment.api.peer import get_peer_grading_strategy, PeerGradingStrategy
 
 from openassessment.assessment.errors import PeerAssessmentError, SelfAssessmentError
-
+from opaque_keys.edx.keys import UsageKey
+from xmodule.modulestore.django import modulestore
 from .utils.data_conversion import create_submission_dict
-
 
 class GradeMixin:
     """Grade Mixin introduces all handlers for displaying grades
@@ -138,6 +138,8 @@ class GradeMixin:
         # It's possible for the score to be `None` even if the workflow status is "done"
         # when all the criteria in the rubric are feedback-only (no options).
         score = workflow['score']
+        xblock_id = self.get_xblock_id()
+        show_correctness = self.get_subsection_show_correctness(xblock_id)
 
         context = {
             'score': score,
@@ -157,11 +159,35 @@ class GradeMixin:
             'allow_latex': self.allow_latex,
             'prompts_type': self.prompts_type,
             'file_urls': self.get_download_urls_from_submission(student_submission),
-            'xblock_id': self.get_xblock_id()
+            'xblock_id': xblock_id,
+            'show_correctness': show_correctness
         }
 
         return ('legacy/grade/oa_grade_complete.html', context)
+    
+    def get_subsection_show_correctness(self, xblock_id):
+        xblock =  modulestore().get_item(UsageKey.from_string(xblock_id))
+        if xblock is not None:
+            unit = self.get_parent_xblock(xblock)
+            if unit is not None:
+                subsection = self.get_parent_xblock(unit)
 
+                if subsection is not None and getattr(subsection, "category", None) == "sequential":
+                    return getattr(subsection, "show_correctness", None)
+                
+        return None
+    
+    def get_parent_xblock(self, xblock):
+        """
+        Returns the xblock that is the parent of the specified xblock, or None if it has no parent.
+        """
+        locator = xblock.location
+        parent_location = modulestore().get_parent_location(locator)
+
+        if parent_location is None:
+            return None
+        return modulestore().get_item(parent_location)    
+            
     def render_grade_incomplete(self, workflow):
         """
         Render the grade incomplete state.
