@@ -11,7 +11,7 @@
             <span>
                 <h4 class="step__title">
                     <span class="wrapper--copy">
-                        {% if score %}
+                        {% if score and show_correctness %}
                             <span id="oa_step_title_grade" class="step__label">{% trans "Your Grade" %}: </span>
                             <span class="grade__value">
                                 <span class="grade__value__title">
@@ -30,6 +30,11 @@
             </span>
         </header>
 
+        {% if not show_correctness %}
+        <p>{% trans "Your response has been graded, but the results are hidden according to the instructor’s settings." %}</p>
+        {% endif %}
+
+        {% if show_correctness %}
         <div class="ui-slidable__content" id="oa_grade_{{ xblock_id }}_content" aria-labelledby="oa_grade_{{ xblock_id }}">
             <div class="wrapper--step__content">
                 <div class="step__content">
@@ -214,5 +219,6 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </li>
 {% endspaceless %}

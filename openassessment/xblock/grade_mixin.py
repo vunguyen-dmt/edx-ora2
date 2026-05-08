@@ -95,6 +95,7 @@ class GradeMixin:
         from openassessment.assessment.api import peer as peer_api
         from openassessment.assessment.api import self as self_api
         from openassessment.assessment.api import staff as staff_api
+        from xmodule.graders import ShowCorrectness
 
         # Peer specific stuff...
         assessment_steps = self.assessment_steps
@@ -138,7 +139,11 @@ class GradeMixin:
         # It's possible for the score to be `None` even if the workflow status is "done"
         # when all the criteria in the rubric are feedback-only (no options).
         score = workflow['score']
-
+        show_correctness = ShowCorrectness.correctness_available(
+            show_correctness=getattr(self, 'show_correctness', ''),
+            due_date=self.due,
+            has_staff_access=self.is_course_staff,
+        )
         context = {
             'score': score,
             'score_explanation': self._get_score_explanation(workflow),
@@ -157,7 +162,8 @@ class GradeMixin:
             'allow_latex': self.allow_latex,
             'prompts_type': self.prompts_type,
             'file_urls': self.get_download_urls_from_submission(student_submission),
-            'xblock_id': self.get_xblock_id()
+            'xblock_id': self.get_xblock_id(),
+            'show_correctness': show_correctness
         }
 
         return ('legacy/grade/oa_grade_complete.html', context)
