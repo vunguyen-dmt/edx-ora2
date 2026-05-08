@@ -134,31 +134,31 @@ class OpenAssessmentBlock(
     )
 
     allow_multiple_files = Boolean(
-        default=True,
+        default=False,
         scope=Scope.settings,
         help="Allow multiple files uploaded with submission (if file upload enabled)."
     )
 
     allow_learner_resubmissions = Boolean(
-        default=False,
+        default=True,
         scope=Scope.settings,
         help="Allow learners to resubmit their response."
     )
 
     date_config_type = String(
-        default=DATE_CONFIG_MANUAL,
+        default=DATE_CONFIG_SUBSECTION,
         scope=Scope.settings,
         help="The type of date configuration. Possible values are 'manual', 'subsection', and 'course_end'."
     )
 
     file_upload_response_raw = String(
         help="Specify whether learners are able to upload files as a part of their response.",
-        default=None,
+        default='required',
         scope=Scope.settings
     )
 
     file_upload_type_raw = String(
-        default=None,
+        default='custom',
         scope=Scope.content,
         help="File upload to be included with submission (can be 'image', 'pdf-and-image', or 'custom')."
     )
@@ -283,7 +283,7 @@ class OpenAssessmentBlock(
 
     text_response_raw = String(
         help="Specify whether learners must include a text based response to this problem's prompt.",
-        default="required",
+        default=None,
         scope=Scope.settings
     )
 
@@ -300,7 +300,16 @@ class OpenAssessmentBlock(
     )
 
     white_listed_file_types = List(
-        default=[],
+        default=[
+            'pdf', 'docx', 'odt', 'rtf', 'txt',
+            'xlsx', 'ods', 'csv',
+            'pptx', 'odp',
+            'java', 'c', 'cpp', 'h', 'r',
+            'png', 'jpg', 'jpeg',
+            'mp4', 'mp3',
+            'zip', 'rar',
+            'tex', 'mat'
+        ],
         scope=Scope.content,
         help="Custom list of file types allowed with submission."
     )
