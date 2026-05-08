@@ -11,6 +11,7 @@ def allow_resubmission(config_data, workflow_data, submission_data: dict) -> boo
     Determines if a learner can reset their submission and try again. A learner
     can resubmit if the following conditions are met:
     - Whether the assignment allows learner resubmissions
+    - Whether the course end date has not passed
     - Whether the submission date has not been exceeded
     - Whether the learner's response has not been graded staff
     - Whether the learner's response has not a grade in process
@@ -26,11 +27,28 @@ def allow_resubmission(config_data, workflow_data, submission_data: dict) -> boo
     """
     return (
         allow_learner_resubmissions(config_data) and not
+        course_end_date_passed(config_data) and not
         submission_date_exceeded(config_data, submission_data) and not
         has_been_graded(workflow_data) and not
         has_grade_in_process(submission_data["uuid"]) and not
         has_peer_step(config_data)
     )
+
+
+def course_end_date_passed(config_data) -> bool:
+    """
+    Checks if the course end date has passed.
+
+    Args:
+        config_data (ORAConfigAPI): Object with all the configuration data of the ORA assignment.
+
+    Returns:
+        bool: True if the course end date has passed, False otherwise.
+    """
+    if not config_data.course or not config_data.course.end:
+        return False
+
+    return datetime.now(pytz.UTC) > config_data.course.end
 
 
 def allow_learner_resubmissions(config_data) -> bool:
