@@ -15,7 +15,7 @@ from typing import List, Set
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.db.models import CharField, F, OuterRef, Subquery, QuerySet
+from django.db.models import CharField, F, Max, OuterRef, Subquery, QuerySet
 from django.db.models.functions import Coalesce
 from django.utils.translation import gettext as _
 import requests
@@ -892,7 +892,24 @@ class OraAggregateData:
         else:
             statuses = all_valid_ora_statuses
 
-        items = AssessmentWorkflow.objects.filter(course_id=course_id, status__in=statuses).values('item_id', 'status')
+        latest_sub_ids = (
+            Submission.objects
+            .filter(student_item__course_id=course_id)
+            .values('student_item__student_id', 'student_item__item_id')
+            .annotate(latest_sub_id=Max('id'))
+            .values_list('latest_sub_id', flat=True)
+        )
+        active_uuids = set(
+            Submission.objects
+            .filter(id__in=list(latest_sub_ids))
+            .values_list('uuid', flat=True)
+        )
+
+        items = AssessmentWorkflow.objects.filter(
+            course_id=course_id,
+            status__in=statuses,
+            submission_uuid__in=active_uuids,
+        ).values('item_id', 'status')
 
         result = defaultdict(lambda: {status: 0 for status in statuses})
         for item in items:
