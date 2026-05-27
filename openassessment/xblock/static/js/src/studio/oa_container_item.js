@@ -107,9 +107,12 @@ export class Prompt {
         $(textarea).val(text);
       }
       const newElId = `${Date.now()}-textarea-${Math.random() * 100}`;
+      const promptTemplate = $('#openassessment_prompt_template');
       $(textarea).attr('id', newElId).tinymce(oaTinyMCE(
         {
-          base_asset_url: $('#openassessment_prompt_template').data('baseAssetUrl'),
+          base_asset_url: promptTemplate.data('baseAssetUrl'),
+          extensions_url: promptTemplate.data('extensionsUrl'),
+          course_id: promptTemplate.data('courseId'),
         },
       ));
     }

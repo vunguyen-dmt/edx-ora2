@@ -1,7 +1,7 @@
 {% load i18n %}
 {% spaceless %}
 <div id="oa_prompts_editor_wrapper" class="oa_editor_content_wrapper">
-    <div id="openassessment_prompt_template" class="is--hidden" data-base-asset-url="{{ base_asset_url }}">
+    <div id="openassessment_prompt_template" class="is--hidden" data-base-asset-url="{{ base_asset_url }}" data-extensions-url="{{ extensions_microfrontend_url }}" data-course-id="{{ course_id }}">
         {% include "legacy/edit/oa_edit_prompt.html" with prompt_uuid="" prompt_description="" %}
     </div>
 

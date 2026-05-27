@@ -13,6 +13,7 @@ from xblock.core import XBlock
 from xblock.fields import List, Scope
 from opaque_keys.edx.locator import LibraryLocatorV2
 
+from django.conf import settings
 from django.template.loader import get_template
 from django.utils.translation import gettext_lazy
 
@@ -204,6 +205,8 @@ class StudioMixin:
             'teams_feature_enabled': self.team_submissions_enabled,
             'teams_enabled': self.teams_enabled,
             'base_asset_url': self.get_base_url_path_for_course_assets(course_id),
+            'extensions_microfrontend_url': getattr(settings, 'EXTENSIONS_MICROFRONTEND_URL', ''),
+            'course_id': str(course_id) if course_id else '',
             'is_released': self.is_released(),
             'teamsets': self.get_teamsets(course_id),
             'selected_teamset_id': self.selected_teamset_id,
