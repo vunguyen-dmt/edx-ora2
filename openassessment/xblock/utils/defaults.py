@@ -4,59 +4,131 @@
 from openassessment.assessment.api.peer import PeerGradingStrategy
 
 
+# DEFAULT_PROMPT = """
+#     Censorship in the Libraries
+
+#     'All of us can think of a book that we hope none of our children or any other children have taken off the shelf. But if I have the right to remove that book from the shelf -- that work I abhor -- then you also have exactly the same right and so does everyone else. And then we have no books left on the shelf for any of us.' --Katherine Paterson, Author
+
+#     Write a persuasive essay to a newspaper reflecting your views on censorship in libraries. Do you believe that certain materials, such as books, music, movies, magazines, etc., should be removed from the shelves if they are found offensive? Support your position with convincing arguments from your own experience, observations, and/or reading.
+
+#     Read for conciseness, clarity of thought, and form.
+# """  # nopep8
+
 DEFAULT_PROMPT = """
-    Censorship in the Libraries
-
-    'All of us can think of a book that we hope none of our children or any other children have taken off the shelf. But if I have the right to remove that book from the shelf -- that work I abhor -- then you also have exactly the same right and so does everyone else. And then we have no books left on the shelf for any of us.' --Katherine Paterson, Author
-
-    Write a persuasive essay to a newspaper reflecting your views on censorship in libraries. Do you believe that certain materials, such as books, music, movies, magazines, etc., should be removed from the shelves if they are found offensive? Support your position with convincing arguments from your own experience, observations, and/or reading.
-
-    Read for conciseness, clarity of thought, and form.
+Nội dung câu hỏi.
 """  # nopep8
+
+# DEFAULT_RUBRIC_CRITERIA = [
+#     {
+#         'name': "Ideas",
+#         'label': "Ideas",
+#         'prompt': "Determine if there is a unifying theme or main idea.",
+#         'order_num': 0,
+#         'feedback': 'optional',
+#         'options': [
+#             {
+#                 'order_num': 0, 'points': 0, 'name': 'Poor', 'label': 'Poor',
+#                 'explanation': """Difficult for the reader to discern the main idea.  Too brief or too repetitive to establish or maintain a focus."""  # nopep8
+#             },
+#             {
+#                 'order_num': 1, 'points': 3, 'name': 'Fair', 'label': 'Fair',
+#                 'explanation': """Presents a unifying theme or main idea, but may include minor tangents.  Stays somewhat focused on topic and task."""  # nopep8
+#             },
+#             {
+#                 'order_num': 2, 'points': 5, 'name': 'Good', 'label': 'Good',
+#                 'explanation': """Presents a unifying theme or main idea without going off on tangents.  Stays completely focused on topic and task."""  # nopep8
+#             },
+#         ],
+#     },
+#     {
+#         'name': "Content",
+#         'label': "Content",
+#         'prompt': "Assess the content of the submission",
+#         'order_num': 1,
+#         'options': [
+#             {
+#                 'order_num': 0, 'points': 0, 'name': 'Poor', 'label': 'Poor',
+#                 'explanation': """Includes little information with few or no details or unrelated details.  Unsuccessful in attempts to explore any facets of the topic."""  # nopep8
+#             },
+#             {
+#                 'order_num': 1, 'points': 1, 'name': 'Fair', 'label': 'Fair',
+#                 'explanation': """Includes little information and few or no details.  Explores only one or two facets of the topic."""  # nopep8
+#             },
+#             {
+#                 'order_num': 2, 'points': 3, 'name': 'Good', 'label': 'Good',
+#                 'explanation': """Includes sufficient information and supporting details. (Details may not be fully developed; ideas may be listed.)  Explores some facets of the topic."""  # nopep8
+#             },
+#             {
+#                 'order_num': 3, 'points': 5, 'name': 'Excellent', 'label': 'Excellent',
+#                 'explanation': """Includes in-depth information and exceptional supporting details that are fully developed.  Explores all facets of the topic."""  # nopep8
+#             },
+#         ],
+#     },
+# ]
 
 DEFAULT_RUBRIC_CRITERIA = [
     {
-        'name': "Ideas",
-        'label': "Ideas",
-        'prompt': "Determine if there is a unifying theme or main idea.",
+        'name': "Ý tưởng",
+        'label': "Ý tưởng",
+        'prompt': "Đánh giá ý tưởng của bài nộp",
         'order_num': 0,
         'feedback': 'optional',
         'options': [
             {
-                'order_num': 0, 'points': 0, 'name': 'Poor', 'label': 'Poor',
-                'explanation': """Difficult for the reader to discern the main idea.  Too brief or too repetitive to establish or maintain a focus."""  # nopep8
+                'order_num': 0, 'points': 0, 'name': 'Không đạt', 'label': 'Không đạt',
+                'explanation': """Lạc đề hoàn toàn hoặc không có chủ đề"""  # nopep8
             },
             {
-                'order_num': 1, 'points': 3, 'name': 'Fair', 'label': 'Fair',
-                'explanation': """Presents a unifying theme or main idea, but may include minor tangents.  Stays somewhat focused on topic and task."""  # nopep8
+                'order_num': 1, 'points': 1, 'name': 'Kém', 'label': 'Kém',
+                'explanation': """Chủ đề cực kỳ mờ nhạt, các ý hoàn toàn rời rạc."""  # nopep8
             },
             {
-                'order_num': 2, 'points': 5, 'name': 'Good', 'label': 'Good',
-                'explanation': """Presents a unifying theme or main idea without going off on tangents.  Stays completely focused on topic and task."""  # nopep8
+                'order_num': 2, 'points': 2, 'name': 'Yếu', 'label': 'Yếu',
+                'explanation': """Có chủ đề nhưng triển khai lỏng lẻo, dễ bị chệch hướng."""  # nopep8
+            },
+                        {
+                'order_num': 3, 'points': 3, 'name': 'Đạt', 'label': 'Đạt',
+                'explanation': """Chủ đề rõ ràng, cấu trúc thống nhất, đáp ứng đúng yêu cầu cốt lõi."""  # nopep8
+            },
+                        {
+                'order_num': 4, 'points': 4, 'name': 'Khá', 'label': 'Khá',
+                'explanation': """Ý tưởng mạch lạc, xuyên suốt, các phần kết nối logic chặt chẽ."""  # nopep8
+            },
+                        {
+                'order_num': 5, 'points': 5, 'name': 'Giỏi', 'label': 'Giỏi',
+                'explanation': """Ý tưởng sắc sảo, độc đáo và có tính nhất quán tuyệt đối."""  # nopep8
             },
         ],
     },
     {
-        'name': "Content",
-        'label': "Content",
-        'prompt': "Assess the content of the submission",
+        'name': "Nội dung",
+        'label': "Nội dung",
+        'prompt': "Đánh giá nội dung của bài nộp",
         'order_num': 1,
         'options': [
             {
-                'order_num': 0, 'points': 0, 'name': 'Poor', 'label': 'Poor',
-                'explanation': """Includes little information with few or no details or unrelated details.  Unsuccessful in attempts to explore any facets of the topic."""  # nopep8
+                'order_num': 0, 'points': 0, 'name': 'Không đạt', 'label': 'Không đạt',
+                'explanation': """Nội dung trống rỗng hoặc không phù hợp."""  # nopep8
             },
             {
-                'order_num': 1, 'points': 1, 'name': 'Fair', 'label': 'Fair',
-                'explanation': """Includes little information and few or no details.  Explores only one or two facets of the topic."""  # nopep8
+                'order_num': 1, 'points': 1, 'name': 'Kém', 'label': 'Kém',
+                'explanation': """Nội dung quá sơ sài, thiếu kiến thức cơ bản."""  # nopep8
             },
             {
-                'order_num': 2, 'points': 3, 'name': 'Good', 'label': 'Good',
-                'explanation': """Includes sufficient information and supporting details. (Details may not be fully developed; ideas may be listed.)  Explores some facets of the topic."""  # nopep8
+                'order_num': 2, 'points': 2, 'name': 'Yếu', 'label': 'Yếu',
+                'explanation': """Nội dung còn sơ sài, chưa đi sâu vào chi tiết."""  # nopep8
             },
-            {
-                'order_num': 3, 'points': 5, 'name': 'Excellent', 'label': 'Excellent',
-                'explanation': """Includes in-depth information and exceptional supporting details that are fully developed.  Explores all facets of the topic."""  # nopep8
+                        {
+                'order_num': 3, 'points': 3, 'name': 'Đạt', 'label': 'Đạt',
+                'explanation': """Nội dung đầy đủ ý chính, lập luận rõ ràng, đúng trọng tâm."""  # nopep8
+            },
+                        {
+                'order_num': 4, 'points': 4, 'name': 'Khá', 'label': 'Khá',
+                'explanation': """Nội dung phong phú, dẫn chứng chính xác và thuyết phục."""  # nopep8
+            },
+                        {
+                'order_num': 5, 'points': 5, 'name': 'Giỏi', 'label': 'Giỏi',
+                'explanation': """Nội dung sâu sắc, thể hiện tư duy phản biện hoặc góc nhìn xuất sắc."""  # nopep8
             },
         ],
     },
