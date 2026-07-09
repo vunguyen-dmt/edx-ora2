@@ -756,6 +756,7 @@ export class ResponseView {
        if ((this.filesDescriptions.indexOf(i) !== -1) && (this.filesDescriptions[i] !== '')) {
          textarea.val(this.filesDescriptions[i]);
        } else {
+         textarea.val(files[i].name);
          descriptionsExists = false;
        }
        textarea.addClass(`file__description file__description__${i}`);
