@@ -66,73 +66,130 @@ Nội dung câu hỏi.
 #     },
 # ]
 
+# DEFAULT_RUBRIC_CRITERIA = [
+#     {
+#         'name': "Ý tưởng",
+#         'label': "Ý tưởng",
+#         'prompt': "Đánh giá ý tưởng của bài nộp",
+#         'order_num': 0,
+#         'feedback': 'optional',
+#         'options': [
+#             {
+#                 'order_num': 0, 'points': 0, 'name': 'Không đạt', 'label': 'Không đạt',
+#                 'explanation': """Lạc đề hoàn toàn hoặc không có chủ đề"""  # nopep8
+#             },
+#             {
+#                 'order_num': 1, 'points': 1, 'name': 'Kém', 'label': 'Kém',
+#                 'explanation': """Chủ đề cực kỳ mờ nhạt, các ý hoàn toàn rời rạc."""  # nopep8
+#             },
+#             {
+#                 'order_num': 2, 'points': 2, 'name': 'Yếu', 'label': 'Yếu',
+#                 'explanation': """Có chủ đề nhưng triển khai lỏng lẻo, dễ bị chệch hướng."""  # nopep8
+#             },
+#                         {
+#                 'order_num': 3, 'points': 3, 'name': 'Đạt', 'label': 'Đạt',
+#                 'explanation': """Chủ đề rõ ràng, cấu trúc thống nhất, đáp ứng đúng yêu cầu cốt lõi."""  # nopep8
+#             },
+#                         {
+#                 'order_num': 4, 'points': 4, 'name': 'Khá', 'label': 'Khá',
+#                 'explanation': """Ý tưởng mạch lạc, xuyên suốt, các phần kết nối logic chặt chẽ."""  # nopep8
+#             },
+#                         {
+#                 'order_num': 5, 'points': 5, 'name': 'Giỏi', 'label': 'Giỏi',
+#                 'explanation': """Ý tưởng sắc sảo, độc đáo và có tính nhất quán tuyệt đối."""  # nopep8
+#             },
+#         ],
+#     },
+#     {
+#         'name': "Nội dung",
+#         'label': "Nội dung",
+#         'prompt': "Đánh giá nội dung của bài nộp",
+#         'order_num': 1,
+#         'options': [
+#             {
+#                 'order_num': 0, 'points': 0, 'name': 'Không đạt', 'label': 'Không đạt',
+#                 'explanation': """Nội dung trống rỗng hoặc không phù hợp."""  # nopep8
+#             },
+#             {
+#                 'order_num': 1, 'points': 1, 'name': 'Kém', 'label': 'Kém',
+#                 'explanation': """Nội dung quá sơ sài, thiếu kiến thức cơ bản."""  # nopep8
+#             },
+#             {
+#                 'order_num': 2, 'points': 2, 'name': 'Yếu', 'label': 'Yếu',
+#                 'explanation': """Nội dung còn sơ sài, chưa đi sâu vào chi tiết."""  # nopep8
+#             },
+#                         {
+#                 'order_num': 3, 'points': 3, 'name': 'Đạt', 'label': 'Đạt',
+#                 'explanation': """Nội dung đầy đủ ý chính, lập luận rõ ràng, đúng trọng tâm."""  # nopep8
+#             },
+#                         {
+#                 'order_num': 4, 'points': 4, 'name': 'Khá', 'label': 'Khá',
+#                 'explanation': """Nội dung phong phú, dẫn chứng chính xác và thuyết phục."""  # nopep8
+#             },
+#                         {
+#                 'order_num': 5, 'points': 5, 'name': 'Giỏi', 'label': 'Giỏi',
+#                 'explanation': """Nội dung sâu sắc, thể hiện tư duy phản biện hoặc góc nhìn xuất sắc."""  # nopep8
+#             },
+#         ],
+#     },
+# ]
+
 DEFAULT_RUBRIC_CRITERIA = [
     {
-        'name': "Ý tưởng",
-        'label': "Ý tưởng",
-        'prompt': "Đánh giá ý tưởng của bài nộp",
+        'name': "Đánh giá tổng thể",
+        'label': "Đánh giá tổng thể",
+        'prompt': "Đánh giá tổng thể bài nộp",
         'order_num': 0,
         'feedback': 'optional',
         'options': [
             {
-                'order_num': 0, 'points': 0, 'name': 'Không đạt', 'label': 'Không đạt',
-                'explanation': """Lạc đề hoàn toàn hoặc không có chủ đề"""  # nopep8
+                'order_num': 0, 'points': 0, 'name': '0', 'label': '0',
+                'explanation': """0"""  # nopep8
             },
             {
-                'order_num': 1, 'points': 1, 'name': 'Kém', 'label': 'Kém',
-                'explanation': """Chủ đề cực kỳ mờ nhạt, các ý hoàn toàn rời rạc."""  # nopep8
+                'order_num': 1, 'points': 1, 'name': '1', 'label': '1',
+                'explanation': """1"""  # nopep8
             },
             {
-                'order_num': 2, 'points': 2, 'name': 'Yếu', 'label': 'Yếu',
-                'explanation': """Có chủ đề nhưng triển khai lỏng lẻo, dễ bị chệch hướng."""  # nopep8
+                'order_num': 2, 'points': 2, 'name': '2', 'label': '2',
+                'explanation': """2"""  # nopep8
             },
-                        {
-                'order_num': 3, 'points': 3, 'name': 'Đạt', 'label': 'Đạt',
-                'explanation': """Chủ đề rõ ràng, cấu trúc thống nhất, đáp ứng đúng yêu cầu cốt lõi."""  # nopep8
+            {
+                'order_num': 3, 'points': 3, 'name': '3', 'label': '3',
+                'explanation': """3"""  # nopep8
             },
-                        {
-                'order_num': 4, 'points': 4, 'name': 'Khá', 'label': 'Khá',
-                'explanation': """Ý tưởng mạch lạc, xuyên suốt, các phần kết nối logic chặt chẽ."""  # nopep8
+            {
+                'order_num': 4, 'points': 4, 'name': '4', 'label': '4',
+                'explanation': """4"""  # nopep8
             },
-                        {
-                'order_num': 5, 'points': 5, 'name': 'Giỏi', 'label': 'Giỏi',
-                'explanation': """Ý tưởng sắc sảo, độc đáo và có tính nhất quán tuyệt đối."""  # nopep8
+            {
+                'order_num': 5, 'points': 5, 'name': '5', 'label': '5',
+                'explanation': """5"""  # nopep8
             },
+            {
+                'order_num': 6, 'points': 6, 'name': '6', 'label': '6',
+                'explanation': """6"""  # nopep8
+            },
+            {
+                'order_num': 7, 'points': 7, 'name': '7', 'label': '7',
+                'explanation': """7"""  # nopep8
+            },
+            {
+                'order_num': 8, 'points': 8, 'name': '8', 'label': '8',
+                'explanation': """8"""  # nopep8
+            },
+            {
+                'order_num': 9, 'points': 9, 'name': '9', 'label': '9',
+                'explanation': """9"""  # nopep8
+            },
+            {
+                'order_num': 10, 'points': 10, 'name': '10', 'label': '10',
+                'explanation': """10"""  # nopep8
+            }
         ],
-    },
-    {
-        'name': "Nội dung",
-        'label': "Nội dung",
-        'prompt': "Đánh giá nội dung của bài nộp",
-        'order_num': 1,
-        'options': [
-            {
-                'order_num': 0, 'points': 0, 'name': 'Không đạt', 'label': 'Không đạt',
-                'explanation': """Nội dung trống rỗng hoặc không phù hợp."""  # nopep8
-            },
-            {
-                'order_num': 1, 'points': 1, 'name': 'Kém', 'label': 'Kém',
-                'explanation': """Nội dung quá sơ sài, thiếu kiến thức cơ bản."""  # nopep8
-            },
-            {
-                'order_num': 2, 'points': 2, 'name': 'Yếu', 'label': 'Yếu',
-                'explanation': """Nội dung còn sơ sài, chưa đi sâu vào chi tiết."""  # nopep8
-            },
-                        {
-                'order_num': 3, 'points': 3, 'name': 'Đạt', 'label': 'Đạt',
-                'explanation': """Nội dung đầy đủ ý chính, lập luận rõ ràng, đúng trọng tâm."""  # nopep8
-            },
-                        {
-                'order_num': 4, 'points': 4, 'name': 'Khá', 'label': 'Khá',
-                'explanation': """Nội dung phong phú, dẫn chứng chính xác và thuyết phục."""  # nopep8
-            },
-                        {
-                'order_num': 5, 'points': 5, 'name': 'Giỏi', 'label': 'Giỏi',
-                'explanation': """Nội dung sâu sắc, thể hiện tư duy phản biện hoặc góc nhìn xuất sắc."""  # nopep8
-            },
-        ],
-    },
+    }
 ]
+
 
 # The rubric's feedback prompt is a set of instructions letting the student
 # know they can provide additional free form feedback in their assessment.
