@@ -9,6 +9,7 @@ import os
 from opaque_keys.edx.keys import CourseKey
 from submissions.api import Submission, SubmissionError, SubmissionRequestError
 
+from openassessment.fileupload import api as file_upload_api
 from openassessment.fileupload.exceptions import FileUploadError
 from openassessment.workflow.errors import AssessmentWorkflowError
 from openassessment.xblock.apis.submissions.errors import (
@@ -17,6 +18,7 @@ from openassessment.xblock.apis.submissions.errors import (
     NoTeamToCreateSubmissionForError,
     DraftSaveException,
     OnlyOneFileAllowedException,
+    SubmissionFileMissingException,
     SubmissionValidationException,
     AnswerTooLongException,
     StudioPreviewException,
@@ -133,6 +135,46 @@ def submit(text_responses, block_config_data, block_submission_data, block_workf
         raise SubmitInternalError from e
 
 
+def _verify_uploaded_files_exist(uploaded_files, file_manager):
+    """
+    Filter the uploaded files of a submission down to those that actually exist
+    in the file storage backend.
+
+    File metadata is saved before the browser uploads the file to storage, so an
+    interrupted upload leaves an entry that points at no stored file. Such entries
+    from the current learner are deleted, so the learner can upload the file again,
+    and the submission is blocked with SubmissionFileMissingException. Such entries
+    from teammates (the current learner cannot delete them) are excluded from the
+    returned list. A storage backend error never blocks the submission.
+    """
+    current_student_id = file_manager.student_item_dict['student_id']
+    verified_files = []
+    missing_own_file_names = []
+    for upload in uploaded_files:
+        if not upload.exists:
+            # Placeholder for a deleted file, kept to preserve file indices.
+            verified_files.append(upload)
+            continue
+        try:
+            is_in_storage = bool(file_upload_api.get_download_url(upload.key))
+        except FileUploadError:
+            logger.exception("Could not verify that file %s exists in storage. Allowing submit.", upload.key)
+            is_in_storage = True
+        if is_in_storage:
+            verified_files.append(upload)
+        elif upload.student_id == current_student_id:
+            missing_own_file_names.append(upload.name or upload.description or str(upload.index + 1))
+            try:
+                file_manager.delete_upload(upload.index)
+            except Exception:  # pylint: disable=broad-except
+                logger.exception("Could not remove metadata of missing file %s", upload.key)
+        else:
+            logger.warning("File %s of a teammate is missing from storage. Excluded from the submission.", upload.key)
+    if missing_own_file_names:
+        raise SubmissionFileMissingException(missing_own_file_names)
+    return verified_files
+
+
 def create_submission(
         student_item_dict,
         submission_data,
@@ -149,6 +191,7 @@ def create_submission(
 
     # Add files
     uploaded_files = block_submission_data.files.get_uploads_for_submission()
+    uploaded_files = _verify_uploaded_files_exist(uploaded_files, block_submission_data.files.file_manager)
     submission_dict.update(format_files_for_submission(uploaded_files))
 
     # Validate
@@ -220,6 +263,7 @@ def create_team_submission(
 
     # Add files
     uploaded_files = block_submission_data.files.get_uploads_for_submission()
+    uploaded_files = _verify_uploaded_files_exist(uploaded_files, block_submission_data.files.file_manager)
     submission_dict.update(format_files_for_submission(uploaded_files))
 
     # Validate

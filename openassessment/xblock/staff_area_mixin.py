@@ -140,9 +140,9 @@ class StaffAreaMixin:
         staff_assessment_required = "staff-assessment" in self.assessment_steps
         context['staff_assessment_required'] = staff_assessment_required
         if staff_assessment_required:
-            # TODO: Remove in AU-617
             if self.is_team_assignment():
-                context['is_enhanced_staff_grader_enabled'] = False
+                staff_grade_only = self.assessment_steps == ["staff-assessment"]
+                context['is_enhanced_staff_grader_enabled'] = staff_grade_only and self.is_enhanced_staff_grader_enabled
             else:
                 context['is_enhanced_staff_grader_enabled'] = self.is_enhanced_staff_grader_enabled
 

@@ -2525,3 +2525,11 @@ msgstr ""
 #: xblock/utils/validation.py:379
 msgid "The submission format is invalid."
 msgstr "Các định dạng cảu bài gửi không hợp lệ."
+
+#: xblock/ui_mixins/legacy/handlers_mixin.py:157
+msgid ""
+"The following files were not uploaded successfully and have been removed "
+"from your response: {file_names}. Please upload them again and resubmit."
+msgstr ""
+"Các tệp sau chưa được tải lên thành công và đã bị gỡ khỏi câu trả lời của "
+"bạn: {file_names}. Vui lòng tải các tệp này lên lại rồi gửi lại câu trả lời."

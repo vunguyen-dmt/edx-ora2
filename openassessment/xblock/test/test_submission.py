@@ -24,6 +24,7 @@ from submissions import team_api as team_sub_api
 from submissions.api import SubmissionInternalError, SubmissionRequestError
 from submissions.models import TeamSubmission
 from openassessment.fileupload import api
+from openassessment.fileupload.exceptions import FileUploadError
 from openassessment.workflow import (
     api as workflow_api,
     team_api as team_workflow_api
@@ -109,6 +110,45 @@ class SubmissionTest(SubmissionXBlockHandlerTestCase, SubmissionTestMixin):
     def test_submit_submission(self, xblock):
         resp = self.request(xblock, 'submit', self.SUBMISSION, response_format='json')
         self.assertTrue(resp[0])
+
+    @scenario('data/file_upload_scenario.xml', user_id='Bob')
+    @patch('openassessment.fileupload.api.remove_file')
+    @patch('openassessment.xblock.apis.submissions.submissions_actions.file_upload_api.get_download_url')
+    def test_submit_blocks_and_removes_file_missing_from_storage(
+            self, xblock, mock_get_download_url, mock_remove_file
+    ):
+        xblock.file_manager.append_uploads({'description': 'my essay', 'name': 'essay.pdf', 'size': 100})
+        mock_get_download_url.return_value = ''
+
+        resp = self.request(xblock, 'submit', self.SUBMISSION, response_format='json')
+
+        self.assertFalse(resp[0])
+        self.assertEqual(resp[1], 'EFILEMISSING')
+        self.assertIn('essay.pdf', resp[2])
+        # The metadata of the missing file is removed so the learner can upload it again.
+        self.assertEqual(xblock.file_manager.get_uploads(), [])
+        mock_remove_file.assert_called_once()
+
+    @scenario('data/file_upload_scenario.xml', user_id='Bob')
+    @patch('openassessment.xblock.apis.submissions.submissions_actions.file_upload_api.get_download_url')
+    def test_submit_allowed_when_file_storage_errors(self, xblock, mock_get_download_url):
+        xblock.file_manager.append_uploads({'description': 'my essay', 'name': 'essay.pdf', 'size': 100})
+        mock_get_download_url.side_effect = FileUploadError('storage unavailable')
+
+        resp = self.request(xblock, 'submit', self.SUBMISSION, response_format='json')
+
+        self.assertTrue(resp[0])
+
+    @scenario('data/file_upload_scenario.xml', user_id='Bob')
+    @patch('openassessment.xblock.apis.submissions.submissions_actions.file_upload_api.get_download_url')
+    def test_submit_with_file_in_storage(self, xblock, mock_get_download_url):
+        xblock.file_manager.append_uploads({'description': 'my essay', 'name': 'essay.pdf', 'size': 100})
+        mock_get_download_url.return_value = 'https://example.com/essay.pdf'
+
+        resp = self.request(xblock, 'submit', self.SUBMISSION, response_format='json')
+
+        self.assertTrue(resp[0])
+        self.assertEqual(xblock.file_manager.get_uploads()[0].name, 'essay.pdf')
 
     @scenario('data/basic_scenario.xml', user_id='Bob')
     def test_submit_answer_too_long(self, xblock):

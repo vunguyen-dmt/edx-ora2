@@ -22,6 +22,7 @@ from openassessment.xblock.apis.submissions.errors import (
     MultipleSubmissionsException,
     OnlyOneFileAllowedException,
     StudioPreviewException,
+    SubmissionFileMissingException,
     SubmissionValidationException,
     SubmitInternalError,
     UnsupportedFileTypeException
@@ -175,6 +176,8 @@ class MfeMixin:
             raise OraApiException(400, error_codes.SUBMISSION_API_ERROR, str(e)) from e
         except EmptySubmissionError as e:
             raise OraApiException(400, error_codes.EMPTY_ANSWER) from e
+        except SubmissionFileMissingException as e:
+            raise OraApiException(400, error_codes.FILE_NOT_FOUND, str(e)) from e
         except SubmitInternalError as e:
             raise OraApiException(500, error_codes.UNKNOWN_ERROR, str(e)) from e
 
