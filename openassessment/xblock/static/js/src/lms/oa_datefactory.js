@@ -21,7 +21,7 @@ export class DateTimeFactory {
       datetime: el.data('datetime'),
       timezone: el.data('timezone'),
       language: el.data('language'),
-      format: '',
+      format: el.data('format') || 'll HH[:]mm',
     };
     return context;
   }

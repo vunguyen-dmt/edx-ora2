@@ -17,7 +17,7 @@
             {% else %}
                 <button class="ui-staff__button button-staff-grading" aria-expanded="false" data-panel="openassessment__staff-grading">{% trans "Grade Available Responses" %}</button>
                 {% comment %} Remove if block in AU-617 {% endcomment %}
-                {% if not is_team_assignment and enhanced_staff_grader_url %}
+                {% if enhanced_staff_grader_url %}
                     <a href="{{enhanced_staff_grader_url}}" class="ui-staff__button button-enhanced-staff-grader button-enhanced-staff-grader-demo" aria-expanded="false">{% trans "Demo the new Grading Experience" %} <span class="icon fa fa-external-link" aria-hidden="true"></span></a>
                 {% endif %}
             {% endif %}
@@ -125,13 +125,13 @@
                                 <td class="label">{{ item.step }}</td>
 
                                 {% if item.start %}
-                                    <td class="value">{{ item.start|utc|date:"N j, Y H:i e" }}</td>
+                                    <td class="value">{{ item.start|timezone:"Asia/Bangkok"|date:"N j, Y H:i" }}</td>
                                 {% else %}
                                     <td class="value">{% trans "N/A" %}</td>
                                 {% endif %}
 
                                 {% if item.due %}
-                                    <td class="value">{{ item.due|utc|date:"N j, Y H:i e" }}</td>
+                                    <td class="value">{{ item.due|timezone:"Asia/Bangkok"|date:"N j, Y H:i" }}</td>
                                 {% else %}
                                     <td class="value">{% trans "N/A" %}</td>
                                 {% endif %}

@@ -29,9 +29,9 @@ from openassessment.runtime_imports.classes import import_block_structure_transf
 from openassessment.runtime_imports.functions import get_course_blocks, modulestore
 from openassessment.assessment.api import peer as peer_api
 from openassessment.assessment.models import Assessment, AssessmentFeedback, AssessmentPart
-from openassessment.fileupload.api import get_download_url
+from openassessment.fileupload.api import get_download_url, get_download_url_2
 from openassessment.workflow.models import AssessmentWorkflow, TeamAssessmentWorkflow
-
+from opaque_keys.edx.keys import UsageKey
 
 logger = logging.getLogger(__name__)
 
@@ -892,32 +892,48 @@ class OraAggregateData:
         else:
             statuses = all_valid_ora_statuses
 
-        latest_sub_ids = (
-            Submission.objects
-            .filter(student_item__course_id=course_id)
-            .values('student_item__student_id', 'student_item__item_id')
-            .annotate(latest_sub_id=Max('id'))
-            .values_list('latest_sub_id', flat=True)
-        )
-        active_uuids = set(
-            Submission.objects
-            .filter(id__in=list(latest_sub_ids))
-            .values_list('uuid', flat=True)
-        )
+        items = AssessmentWorkflow.objects.filter(course_id=course_id, status__in=statuses).values('item_id', 'status', 'submission_uuid')
+        item_ids = set()
+        for i in items:
+            item_ids.add(i['item_id'])
 
-        items = AssessmentWorkflow.objects.filter(
-            course_id=course_id,
-            status__in=statuses,
-            submission_uuid__in=active_uuids,
-        ).values('item_id', 'status')
+        team_ora_ids = set()
+        individual_ora_ids = set()
+        available_item_ids = set()
+
+        for i in item_ids:
+            ora_usage_key = UsageKey.from_string(i)
+            if modulestore().has_item(ora_usage_key):
+                available_item_ids.add(i)
+                ora_metadata = modulestore().get_item(ora_usage_key)
+                if ora_metadata.teams_enabled:
+                    team_ora_ids.add(i)
+                else:
+                    individual_ora_ids.add(i)
+
+        active_submissions = Submission.objects.select_related('student_item').filter(student_item__item_id__in=available_item_ids, status='A').values('uuid', 'team_submission_id')
+        active_team_submissions_uuids= set()
+        active_individual_submissions_uuids= set()
+
+        for i in active_submissions:
+            if i['team_submission_id']:
+                active_team_submissions_uuids.add(str(i['uuid']))
+            else:
+                active_individual_submissions_uuids.add(str(i['uuid']))
 
         result = defaultdict(lambda: {status: 0 for status in statuses})
+
+        for item in items:
+            result[item['item_id']]['total'] = 0
+
         for item in items:
             item_id = item['item_id']
             status = item['status']
-            result[item_id]['total'] = result[item_id].get('total', 0) + 1
-            if status in statuses:
-                result[item_id][status] += 1
+            submission_uuid = item['submission_uuid']
+            if (item_id in team_ora_ids and submission_uuid in active_team_submissions_uuids) or (item_id in individual_ora_ids and submission_uuid in active_individual_submissions_uuids):
+                result[item_id]['total'] = result[item_id]['total'] + 1
+                if status in statuses:
+                    result[item_id][status] += 1
 
         return result
 
@@ -1580,10 +1596,10 @@ class ZippedListSubmissionAnswer(OraSubmissionAnswer):
         except IndexError:
             return default
 
-    def _safe_get_download_url(self, key):
+    def _safe_get_download_url(self, key, number_of_file):
         """ Helper to get a download URL """
         try:
-            return get_download_url(key)
+            return get_download_url_2(key) if number_of_file == 1 else get_download_url(key)
         except FileUploadInternalError as exc:
             logger.exception(
                 "FileUploadError: Download url for file key %s failed with error %s",
@@ -1609,11 +1625,12 @@ class ZippedListSubmissionAnswer(OraSubmissionAnswer):
             file_names = self.raw_answer.get(self.version.name, [])
             file_descriptions = self.raw_answer.get(self.version.description, [])
             file_sizes = self.raw_answer.get(self.version.size, [])
+            number_of_file = len(file_keys)
             for i, key in enumerate(file_keys):
                 name = self._index_safe_get(i, file_names, default_missing_value)
                 description = self._index_safe_get(i, file_descriptions, default_missing_value)
                 size = self._index_safe_get(i, file_sizes, 0)
-                url = None if not generate_urls else self._safe_get_download_url(key)
+                url = None if not generate_urls else self._safe_get_download_url(key, number_of_file)
                 file_upload = SubmissionFileUpload(
                     key,
                     name=name,
