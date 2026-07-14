@@ -39,7 +39,7 @@
           height: '300',
           schema: 'html5',
           plugins: 'code image link lists',
-          toolbar: 'formatselect | bold italic underline | link blockquote image | numlist bullist outdent indent | strikethrough | code | undo redo',
+          toolbar: 'formatselect | fontselect fontsizeselect | bold italic underline | link blockquote image | numlist bullist outdent indent | strikethrough | code | undo redo',
         };
 
         // if readonly hide toolbar, menubar and statusbar
