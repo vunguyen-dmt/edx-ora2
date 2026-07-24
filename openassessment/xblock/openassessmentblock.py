@@ -1195,6 +1195,9 @@ class OpenAssessmentBlock(
                 self.due if self.due else DISTANT_FUTURE
             )
 
+        if open_range[1] == DISTANT_FUTURE and self.course and self.course.end:
+            open_range = (open_range[0], self.course.end)
+
         if self.is_beta_tester:
             beta_start = self._adjust_start_date_for_beta_testers(open_range[0])
             open_range = (beta_start, open_range[1])
